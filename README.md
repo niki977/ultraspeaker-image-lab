@@ -1,67 +1,75 @@
 # The Ultraspeaker Image Lab
 
-Add-in per PowerPoint che regola le foto delle slide, come «Regola immagine» di Keynote:
-istogramma con livelli (nero 0%, mezzitoni 50%, bianco 100%), esposizione, contrasto, saturazione,
-luci, ombre, nitidezza, riduzione rumore, temperatura e tinta, stili rapidi e punto neutro,
-migliora qualità, ritaglio, rotazione (90°, 180° e raddrizzamento fino a ±45°), DuoTone/TriTone
-(con colori presi dalla foto e ombre o luci trasparenti), zoom, annulla/ripeti.
-Interfaccia in italiano, inglese, spagnolo, francese e tedesco.
+Regola le foto delle slide come un programma di fotoritocco: istogramma con livelli (nero, mezzitoni, bianco),
+esposizione, contrasto, saturazione, luci, ombre, nitidezza, riduzione rumore, temperatura e tinta, stili rapidi,
+punto neutro, «Migliora qualità», ritaglio a proporzioni (social, slide, stampa) o a misura, rotazione
+(90°, 180° e raddrizzamento fino a ±45°), DuoTone/TriTone, zoom, annulla/ripeti.
+Interfaccia in italiano, inglese, spagnolo, francese e tedesco. Fa parte dei Lab The Ultraspeaker
+e segue la linea guida comune 1.3.
 
-## Come funziona nella slide
+- **Versione web:** <https://niki977.github.io/ultraspeaker-image-lab/>
+- **Pannello di PowerPoint:** manifest `image-lab-manifest.xml` (in prova, fase 2)
+- **Versione:** 1.4.0 (novembre 2026)
 
-1. Selezioni una foto: il pannello la legge e mostra anteprima e istogramma.
-2. Muovi i cursori: l’anteprima nel pannello si aggiorna subito.
-3. **Applica alla slide**: la foto regolata viene inserita nella stessa posizione, con la stessa
-   dimensione e rotazione. L’originale resta nella slide, **nascosto** (lo vedi nel Riquadro di selezione).
-4. Se riselezioni la foto modificata, il pannello riparte dall’originale con le regolazioni salvate:
-   puoi cambiarle quante volte vuoi senza perdere qualità, oppure premere **Originale** per tornare indietro.
+## Come funziona
+
+**Nel browser** si apre una foto (o la si trascina sull'anteprima), si regola e si scarica.
+Sul telefono «Salva o condividi» apre il menu del sistema (Foto, WhatsApp…).
+
+**In PowerPoint** si seleziona una foto e si apre Home → The Ultraspeaker → Image Lab.
+«Applica alla slide» inserisce la foto regolata nella stessa posizione, misura e rotazione;
+l'originale resta nella slide, nascosto. Le regolazioni stanno nelle etichette della foto
+(`ULAB_ORIG`, `ULAB_PARAMS`, `ULAB_ROLE`): riselezionando la foto si riprendono, e «Originale» torna alla foto di partenza.
+
+Il ritaglio per social, slide e stampa imposta solo la proporzione: la foto conserva la risoluzione della zona scelta.
+Solo «Dimensioni personalizzate» porta la foto a una misura esatta (px, oppure cm con dpi).
 
 ## Requisiti
 
-PowerPoint di Microsoft 365 con le API PowerPoint 1.10:
-Windows versione 2601 o successiva, Mac 16.105 o successiva, oppure PowerPoint sul web.
-Su versioni precedenti il pannello mostra un messaggio che chiede di aggiornare.
+PowerPoint di Microsoft 365 con PowerPointApi 1.10 e ImageCoercion 1.1: Windows 2601 o successivo,
+Mac 16.105 o successivo, oppure PowerPoint per il web. iPad non è supportato.
 
-## Pubblicazione su GitHub Pages
+## Struttura
 
-1. Crea su GitHub un repository pubblico chiamato **image-lab** (account `niki977`).
-2. Carica tutti i file di questa cartella (anche le cartelle `assets` e `fonts`).
-3. In *Settings → Pages* scegli *Deploy from a branch*, ramo `main`, cartella `/ (root)`.
-4. Dopo un minuto il pannello è raggiungibile su `https://niki977.github.io/image-lab/`
-   (aprendolo nel browser parte in modalità prova con una foto di esempio).
-
-Se usi un altro nome di repository, sostituisci `https://niki977.github.io/image-lab/` in `image-lab-manifest.xml`.
-
-## Installazione per le prove (sideload)
-
-- **PowerPoint sul web**: Home → Componenti aggiuntivi → Altri componenti aggiuntivi → I miei componenti
-  aggiuntivi → Carica il mio componente aggiuntivo → scegli `image-lab-manifest.xml`.
-- **Mac**: copia `image-lab-manifest.xml` nella cartella
-  `~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/wef` (creala se non esiste), poi riapri PowerPoint:
-  lo trovi in Home → Componenti aggiuntivi → I miei componenti aggiuntivi.
-- **Windows**: Home → Componenti aggiuntivi → Altri componenti aggiuntivi → I miei componenti aggiuntivi →
-  Carica il mio componente aggiuntivo (nelle versioni recenti); in alternativa usa una cartella condivisa
-  come «Catalogo di componenti aggiuntivi attendibili» nelle impostazioni del Centro protezione.
-
-Il pulsante **Image Lab** compare nella scheda Home, nel gruppo «The Ultraspeaker».
-
-## File
-
-| File | Cosa contiene |
+| Percorso | Contenuto |
 |---|---|
-| `index.html` | Il pannello (struttura e stile) |
-| `app.js` | Collegamento con PowerPoint, anteprima, istogramma, applicazione |
-| `imaging.js` | Elaborazione dei pixel (livelli, tono, colore, nitidezza, rumore) |
-| `i18n.js` | Testi nelle 5 lingue |
-| `image-lab-manifest.xml` | Manifest dell’add-in per PowerPoint |
-| `assets/` | Loghi SVG (Image Lab, The Ultraspeaker, Arena, cursori) e icone PNG (16–300 px) |
-| `fonts/` | Champagne & Limousines in woff2 (Regular, Italic, Bold, Bold Italic), il carattere del brand book. Gratis per uso personale; per uso commerciale e inserimento web l’autrice (Nymphont) chiede una donazione |
-| `GUIDA-INSTALLAZIONE.html` | Guida passo passo |
-| `support.html`, `privacy.html`, `terms.html`, `legal.css` | Pagine di supporto, privacy e condizioni d’uso (IT/EN) richieste dallo store |
-| `store/` | Testi della scheda nelle 5 lingue, screenshot 1366×768, presentazione di prova, istruzioni per Partner Center |
+| `index.html` | Versione web e pannello (una sola pagina) |
+| `css/app.css` | Stile proprio del Lab, dopo `shared/ultraspeaker-lab.css` |
+| `app.js` | Interfaccia, anteprima, istogramma, ritaglio, rotazione, DuoTone, collegamento con PowerPoint |
+| `imaging.js` | Elaborazione dei pixel |
+| `i18n.js` | Testi nelle cinque lingue |
+| `support.html`, `privacy.html`, `terms.html`, `GUIDA-INSTALLAZIONE.html`, `legal.js` | Pagine di servizio in cinque lingue |
+| `image-lab-manifest.xml`, `site.webmanifest` | Manifest dell'add-in e della versione web |
+| `shared/`, `fonts/` | Kit comune 1.3 dei Lab (non si modifica qui) |
+| `assets/` | Loghi, Arena, favicon e icone (16–512 px) |
+| `guide/` | Guida d'utilizzo PDF in cinque lingue, sorgenti, screenshot e `capture.mjs` |
+| `store/` | Testi e screenshot per AppSource, presentazione di prova |
 
-## Note per il Marketplace Microsoft
+Memoria del browser: solo la lingua, in `ultraspeaker.lang` (comune ai Lab). La vecchia chiave `imagelab.lang`
+viene copiata al primo avvio e poi cancellata.
 
-Per la pubblicazione su AppSource servono anche: pagina di privacy e condizioni d’uso (URL),
-icona 300×300 (`assets/image-lab-icon-300.png`), screenshot del pannello e una descrizione estesa.
-L’add-in non invia le immagini a nessun server: tutta l’elaborazione avviene nel pannello.
+## Guida d'utilizzo
+
+Le guide PDF in cinque lingue stanno in `guide/` (`image-lab-guide-<lingua>.pdf`) e si aprono dal pulsante «Guida».
+I sorgenti sono `guide/src/guide.<lingua>.html`, gli screenshot `guide/img/<lingua>/`. Per aggiornarle dopo una modifica
+all'interfaccia, dalla radice del repository e con Playwright installato:
+
+1. `node guide/capture.mjs` rifà tutti gli screenshot (e `guide/img/pins.json`, la posizione dei richiami);
+2. aggiorna i testi in `guide/src/` se serve (l'italiano è la versione di riferimento);
+3. `node shared/guide/build-guide.mjs` genera i cinque PDF.
+
+Il capitolo 08 (PowerPoint) ha il riquadro «In arrivo»: quando il pannello esce, va tolto e i PDF rigenerati.
+
+## Pubblicare un aggiornamento
+
+1. Copia i file nella cartella del repository e, in GitHub Desktop, fai «Commit to main» e «Push origin».
+2. Aggiorna `?v=AAAAMMGG` su CSS e JS a ogni rilascio (GitHub Pages e PowerPoint tengono i file in cache).
+3. Se cambia il manifest, aumenta `<Version>` e sostituiscilo in PowerPoint
+   (Mac: `~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/wef`); controllalo con
+   `npx office-addin-manifest validate image-lab-manifest.xml`.
+
+## Versioni
+
+- **1.4.0** (novembre 2026): uniformazione alla linea guida 1.3 (kit comune, aspetto, lingua comune, pagine di servizio
+  scure in cinque lingue, guida d'utilizzo PDF, nuovo indirizzo `ultraspeaker-image-lab`); ritaglio a proporzioni.
+- **1.3.0** (ottobre 2026): DuoTone/TriTone, ritaglio, rotazione, «Migliora qualità», semplificazione del codice.

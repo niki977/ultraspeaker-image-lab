@@ -3,143 +3,215 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Installare The Ultraspeaker Image Lab</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/image-lab-icon-32.png">
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="apple-touch-icon" href="assets/image-lab-icon-180.png">
-<style>
-/* Champagne & Limousines (brand book The Ultraspeaker, p. 17): Regular, Italic, Bold, Bold Italic dalla cartella fonts */
-@font-face{font-family:"Champagne & Limousines";font-weight:100 549;font-style:normal;font-display:swap;src:url(fonts/champagne-limousines-regular.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:550 900;font-style:normal;font-display:swap;src:url(fonts/champagne-limousines-bold.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:100 549;font-style:italic;font-display:swap;src:url(fonts/champagne-limousines-italic.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:550 900;font-style:italic;font-display:swap;src:url(fonts/champagne-limousines-bolditalic.woff2) format("woff2")}
-:root{--bg:#f3f3f3;--surface:#fff;--ink:#000;--ink-2:#444;--line:#ddd;--soft:#ececec;--code:#efefef}
-@media (prefers-color-scheme: dark){:root{--bg:#000;--surface:#111;--ink:#fff;--ink-2:#c8c8c8;--line:#2a2a2a;--soft:#222;--code:#1c1c1c;color-scheme:dark}}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Champagne & Limousines","Avenir Next","Segoe UI",Arial,sans-serif}
-header{background:#000;color:#fff;padding:28px 16px 22px}
-header .in,main{max-width:760px;margin:0 auto}
-header img{display:block;width:min(300px,75%);height:auto}
-main{padding:28px 16px 64px}
-h1{font-size:28px;font-weight:400;line-height:1.05;margin:0 0 8px;text-wrap:balance}
-.lead{color:var(--ink-2);margin:0 0 28px}
-section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
-h2{font-size:18px;line-height:1.2;margin:0 0 10px;display:flex;gap:10px;align-items:center}
-h2 .n{background:var(--ink);color:var(--bg);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;font-size:12px;flex:none}
-p b,li b{font-weight:700}
-ol{padding-left:20px;margin:0}li{margin:6px 0}
-code{background:var(--code);padding:2px 6px;border-radius:5px;font-size:13px;word-break:break-all;font-family:ui-monospace,Menlo,monospace}
-.note{background:var(--soft);border-radius:8px;padding:10px 14px;font-size:14px;margin-top:12px}
-.muted{color:var(--ink-2);font-size:14px}
-.tag{text-align:center;font-size:10px;letter-spacing:.42em;text-transform:uppercase;color:var(--ink-2);margin-top:28px}
-.tag img{display:block;width:180px;height:auto;margin:0 auto 14px}
-</style>
+<title>Installazione · The Ultraspeaker Image Lab</title>
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20261112">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/image-lab-icon-32.png?v=20261112">
+<link rel="apple-touch-icon" href="assets/image-lab-icon-180.png?v=20261112">
+<link rel="stylesheet" href="shared/ultraspeaker-lab.css?v=20261112">
+<link rel="stylesheet" href="css/app.css?v=20261112">
+<script src="shared/ultraspeaker-lang.js?v=20261112"></script>
+<!-- Lingua letta prima del disegno della pagina, così compare subito il testo giusto -->
+<script>document.documentElement.lang = UltraspeakerLang.get("imagelab.lang");</script>
 </head>
-<body>
-<header><div class="in">
-  <a href="https://www.theultraspeaker.com/" target="_blank" rel="noopener" style="display:inline-block"><img src="assets/logo-image-lab-white.svg" alt="The Ultraspeaker Image Lab"></a>
-</div></header>
+<body data-page="install">
+<div class="us-doc">
+  <header class="us-header">
+    <a class="us-logo" href="https://www.theultraspeaker.com" target="_blank" rel="noopener"><img src="assets/logo-image-lab-white.svg?v=20261112" alt="The Ultraspeaker Image Lab" width="167" height="60"></a>
+    <div class="us-header-tools">
+      <label class="us-lang"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span class="us-sr" data-t="language">Lingua</span><select id="lang"></select></label>
+      <a class="us-btn us-guide" id="usGuide" href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" aria-label="Guida d'utilizzo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><span data-t="guide">Guida</span></a>
+    </div>
+  </header>
+  <nav class="us-doc-nav"><a href="support.html" data-nav="support">Supporto</a><a href="privacy.html" data-nav="privacy">Privacy</a><a href="terms.html" data-nav="terms">Condizioni d'uso</a><a href="GUIDA-INSTALLAZIONE.html" data-nav="install" aria-current="page">Installazione</a></nav>
 <main>
+<div data-lang="it" lang="it">
 <h1>Installare The Ultraspeaker Image Lab in PowerPoint</h1>
-<p class="lead">Tre passaggi, circa 10 minuti, da fare una volta sola per ogni computer (Mac o Windows). Poi il pulsante <b>Image Lab</b> resta nella scheda <b>Home</b> di PowerPoint, nel gruppo <b>The Ultraspeaker</b>.</p>
-
-<section>
-<h2><span class="n">!</span>Prima di iniziare</h2>
-<p class="muted">Image Lab usa una funzione recente di PowerPoint per leggere le foto della slide. Serve PowerPoint di <b>Microsoft 365</b> aggiornato:</p>
+<p class="us-updated">Ultimo aggiornamento: 12 novembre 2026</p>
+<p><b>Titolare:</b> Nicholas D. Charles (The Ultraspeaker) · <a href="mailto:info@theultraspeaker.com">info@theultraspeaker.com</a></p>
+<p class="note">Il pannello per PowerPoint è in fase di prova e sarà disponibile a breve. Nel frattempo usa la versione web, senza installare nulla: <a href="https://niki977.github.io/ultraspeaker-image-lab/">niki977.github.io/ultraspeaker-image-lab</a>.</p>
+<p>Tre passaggi, circa 10 minuti, da fare una volta sola per ogni computer. Poi il pulsante <b>Image Lab</b> resta nella scheda <b>Home</b> di PowerPoint, nel gruppo <b>The Ultraspeaker</b>.</p>
+<h2>Requisiti</h2>
+<p>PowerPoint di Microsoft 365 aggiornato: Windows 2601 o successivo, Mac 16.105 o successivo, oppure PowerPoint per il web. PowerPoint per iPad non è supportato.</p>
+<h2>1 · Il file da installare</h2>
+<p>Ti serve solo il manifest <code>image-lab-manifest.xml</code>, che trovi nel repository <a href="https://github.com/niki977/ultraspeaker-image-lab">github.com/niki977/ultraspeaker-image-lab</a> o che ti mandiamo su richiesta. Punta già a <code>https://niki977.github.io/ultraspeaker-image-lab/</code>: non devi modificarlo.</p>
+<h2>2 · PowerPoint per Mac</h2>
 <ol>
-<li><b>Mac</b>: versione 16.105 o successiva (<b>PowerPoint → Informazioni su PowerPoint</b>).</li>
-<li><b>Windows</b>: versione 2601 o successiva (<b>File → Account → Informazioni su PowerPoint</b>).</li>
-<li><b>PowerPoint sul web</b>: sempre aggiornato.</li>
+<li>Chiudi PowerPoint (⌘Q).</li>
+<li>Nel Finder premi <b>⌘ + Maiusc + G</b> e incolla: <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
+<li>Se non c'è, crea una cartella chiamata <code>wef</code> e copia dentro <code>image-lab-manifest.xml</code>. Se c'è già una versione precedente, sostituiscila.</li>
+<li>Apri PowerPoint e una presentazione: in <b>Home</b> trovi il gruppo <b>The Ultraspeaker</b> con il pulsante <b>Image Lab</b>.</li>
 </ol>
-<div class="note">Con una versione più vecchia l'add-in si installa lo stesso, ma il pannello mostra <b>Aggiorna PowerPoint</b> invece dei controlli. Su Mac l'aggiornamento si fa da <b>Aiuto → Controlla aggiornamenti</b>.</div>
-</section>
-
-<section>
-<h2><span class="n">1</span>Metti online i file (GitHub Pages, gratuito)</h2>
-<p class="muted">Gli add-in di Office si caricano sempre da un indirizzo web sicuro (https). GitHub Pages lo fornisce gratis e per sempre.</p>
+<p class="note">Se compare ancora la versione vecchia: chiudi PowerPoint, svuota <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Library/Caches</code> e riaprilo.</p>
+<h2>2 · PowerPoint per Windows</h2>
 <ol>
-<li>Accedi a <b>github.com</b> con l'account <b>niki977</b> (lo stesso del QR Lab).</li>
-<li>In alto a destra: <b>+ → New repository</b>. Nome: <code>image-lab</code>, visibilità <b>Public</b>, poi <b>Create repository</b>.</li>
-<li>Nella pagina del repository clicca <b>uploading an existing file</b> e trascina dentro: <code>index.html</code>, <code>app.js</code>, <code>imaging.js</code>, <code>i18n.js</code>, <code>image-lab-manifest.xml</code>, <code>README.md</code>, questa guida e le cartelle <code>assets</code> e <code>fonts</code>. Poi <b>Commit changes</b>.</li>
-<li>Vai su <b>Settings → Pages</b>. In “Branch” scegli <b>main</b> e <b>/ (root)</b>, poi <b>Save</b>.</li>
-<li>Dopo 1–2 minuti apri <code>https://niki977.github.io/image-lab/</code>: se vedi il pannello nero di Image Lab con una foto di esempio, è online.</li>
+<li>Crea una cartella, per esempio <code>C:\ImageLab</code>, e copia dentro <code>image-lab-manifest.xml</code>.</li>
+<li>Tasto destro sulla cartella → <b>Proprietà → Condivisione → Condividi…</b>, scegli il tuo utente, <b>Condividi</b> e <b>Fine</b>. Annota il percorso di rete (simile a <code>\\NOME-PC\ImageLab</code>).</li>
+<li>In PowerPoint: <b>File → Opzioni → Centro protezione → Impostazioni Centro protezione… → Cataloghi di componenti aggiuntivi attendibili</b>. Incolla il percorso di rete in <b>URL catalogo</b>, <b>Aggiungi catalogo</b>, spunta <b>Mostra nel menu</b>, poi <b>OK</b>.</li>
+<li>Chiudi e riapri PowerPoint, vai su <b>Home → Componenti aggiuntivi → CARTELLA CONDIVISA</b>, seleziona <b>The Ultraspeaker Image Lab</b> e <b>Aggiungi</b>.</li>
 </ol>
-</section>
-
-<section>
-<h2><span class="n">2</span>Il manifest è già pronto</h2>
-<p class="muted"><code>image-lab-manifest.xml</code> è già compilato per l'account GitHub <b>niki977</b> e punta a <code>https://niki977.github.io/image-lab/</code>. Non devi modificarlo: basta che il repository si chiami esattamente <code>image-lab</code>.</p>
-<div class="note">Il nome del file non conta per PowerPoint: conta il codice identificativo scritto dentro, che è diverso da quello del QR Lab. Per questo i due add-in convivono senza problemi. Usa però nomi di file diversi, così non sovrascrivi il manifest del QR Lab.</div>
-</section>
-
-<section>
-<h2><span class="n">3</span>Installa in PowerPoint per Mac</h2>
-<p class="muted">Se usi Windows, salta alla sezione successiva.</p>
+<h2>2 · PowerPoint per il web</h2>
+<p><b>Home → Componenti aggiuntivi → Altri componenti aggiuntivi → I miei componenti aggiuntivi → Carica il mio componente aggiuntivo</b> e seleziona <code>image-lab-manifest.xml</code>.</p>
+<h2>3 · Prova</h2>
 <ol>
-<li>Chiudi PowerPoint.</li>
-<li>Nel Finder premi <b>⌘ + Maiusc + G</b> e incolla:<br><code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
-<li>Apri la cartella <code>wef</code> (c'è già: contiene il manifest del QR Lab). Copia dentro <code>image-lab-manifest.xml</code>, accanto all'altro file. Se il Finder chiede di sostituire un file, rispondi <b>No</b> e controlla il nome.</li>
-<li>Apri PowerPoint e una presentazione. Vai su <b>Home → Componenti aggiuntivi</b> (a destra nella barra; nelle versioni meno recenti è in <b>Inserisci → Componenti aggiuntivi → I miei componenti aggiuntivi</b>) e scegli <b>The Ultraspeaker Image Lab</b>.</li>
-<li>Da quel momento trovi il pulsante <b>Image Lab</b> nella scheda <b>Home</b>, nel gruppo <b>The Ultraspeaker</b>.</li>
+<li>Inserisci una foto in una slide e selezionala.</li>
+<li>Fai clic su <b>Home → Image Lab</b>: il pannello mostra la foto e l'istogramma.</li>
+<li>Scegli lo stile <b>Palco</b> e fai clic su <b>Applica alla slide</b>.</li>
 </ol>
-<div class="note">Se il comando non compare: chiudi PowerPoint del tutto (⌘Q) e riaprilo. In alcune versioni la voce si chiama <b>Add-ins</b>.</div>
-</section>
-
-<section>
-<h2><span class="n">3</span>Installa in PowerPoint per Windows</h2>
-<p class="muted">Su Windows PowerPoint legge il manifest da una cartella condivisa. I file online su GitHub sono gli stessi del Mac.</p>
-<p><b>Se hai già installato il QR Lab</b></p>
+<p class="note">Sul PC aziendale l'IT può distribuire l'add-in dal Microsoft 365 admin center con il solo file del manifest.</p>
+<p class="note"><b>Guida d'utilizzo in PDF:</b> <a href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" lang="it">Italiano</a> · <a href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" lang="en">English</a> · <a href="guide/image-lab-guide-es.pdf" target="_blank" rel="noopener" lang="es">Español</a> · <a href="guide/image-lab-guide-fr.pdf" target="_blank" rel="noopener" lang="fr">Français</a> · <a href="guide/image-lab-guide-de.pdf" target="_blank" rel="noopener" lang="de">Deutsch</a></p>
+</div>
+<div data-lang="en" lang="en">
+<h1>Installing The Ultraspeaker Image Lab in PowerPoint</h1>
+<p class="us-updated">Last updated: 12 November 2026</p>
+<p><b>Owner:</b> Nicholas D. Charles (The Ultraspeaker) · <a href="mailto:info@theultraspeaker.com">info@theultraspeaker.com</a></p>
+<p class="note">The PowerPoint pane is being tested and will be available soon. In the meantime use the web version, with nothing to install: <a href="https://niki977.github.io/ultraspeaker-image-lab/">niki977.github.io/ultraspeaker-image-lab</a>.</p>
+<p>Three steps, about 10 minutes, to do once per computer. After that the <b>Image Lab</b> button stays in PowerPoint's <b>Home</b> tab, in the <b>The Ultraspeaker</b> group.</p>
+<h2>Requirements</h2>
+<p>An up-to-date Microsoft 365 PowerPoint: Windows 2601 or later, Mac 16.105 or later, or PowerPoint for the web. PowerPoint for iPad is not supported.</p>
+<h2>1 · The file to install</h2>
+<p>You only need the manifest <code>image-lab-manifest.xml</code>, available in the repository <a href="https://github.com/niki977/ultraspeaker-image-lab">github.com/niki977/ultraspeaker-image-lab</a> or from us on request. It already points to <code>https://niki977.github.io/ultraspeaker-image-lab/</code>: you do not need to edit it.</p>
+<h2>2 · PowerPoint for Mac</h2>
 <ol>
-<li>Copia <code>image-lab-manifest.xml</code> nella stessa cartella condivisa del QR Lab (per esempio <code>C:\QRLab</code>), accanto al suo manifest.</li>
-<li>Chiudi PowerPoint del tutto e riaprilo, poi passa ad <b>Attiva l'add-in</b> qui sotto.</li>
+<li>Quit PowerPoint (⌘Q).</li>
+<li>In the Finder press <b>⌘ + Shift + G</b> and paste: <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
+<li>If it is not there, create a folder called <code>wef</code> and copy <code>image-lab-manifest.xml</code> into it. If an earlier version is already there, replace it.</li>
+<li>Open PowerPoint and a presentation: in <b>Home</b> you will find the <b>The Ultraspeaker</b> group with the <b>Image Lab</b> button.</li>
 </ol>
-<p><b>Se è il primo add-in: prepara la cartella</b></p>
+<p class="note">If the old version still appears: quit PowerPoint, empty <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Library/Caches</code> and open it again.</p>
+<h2>2 · PowerPoint for Windows</h2>
 <ol>
-<li>Crea una cartella, per esempio <code>C:\Ultraspeaker</code>, e copia dentro <code>image-lab-manifest.xml</code>.</li>
-<li>Tasto destro sulla cartella → <b>Proprietà</b> → scheda <b>Condivisione</b> → <b>Condividi…</b></li>
-<li>Scegli il tuo utente, clicca <b>Condividi</b> e poi <b>Fine</b>.</li>
-<li>Annota il <b>percorso di rete</b> che compare, simile a <code>\\NOME-PC\Ultraspeaker</code>.</li>
+<li>Create a folder, for example <code>C:\ImageLab</code>, and copy <code>image-lab-manifest.xml</code> into it.</li>
+<li>Right-click the folder → <b>Properties → Sharing → Share…</b>, choose your user, <b>Share</b> and <b>Done</b>. Note the network path (similar to <code>\\PC-NAME\ImageLab</code>).</li>
+<li>In PowerPoint: <b>File → Options → Trust Center → Trust Center Settings… → Trusted Add-in Catalogs</b>. Paste the network path in <b>Catalog Url</b>, <b>Add catalog</b>, tick <b>Show in Menu</b>, then <b>OK</b>.</li>
+<li>Close and reopen PowerPoint, go to <b>Home → Add-ins → SHARED FOLDER</b>, select <b>The Ultraspeaker Image Lab</b> and <b>Add</b>.</li>
 </ol>
-<p><b>Dillo a PowerPoint</b> (solo la prima volta)</p>
+<h2>2 · PowerPoint for the web</h2>
+<p><b>Home → Add-ins → More Add-ins → My Add-ins → Upload My Add-in</b> and select <code>image-lab-manifest.xml</code>.</p>
+<h2>3 · Try it</h2>
 <ol>
-<li>Apri PowerPoint → <b>File → Opzioni → Centro protezione → Impostazioni Centro protezione…</b></li>
-<li>A sinistra scegli <b>Cataloghi di componenti aggiuntivi attendibili</b>.</li>
-<li>In <b>URL catalogo</b> incolla il percorso di rete (<code>\\NOME-PC\Ultraspeaker</code>, non <code>C:\…</code>) e clicca <b>Aggiungi catalogo</b>.</li>
-<li>Spunta <b>Mostra nel menu</b>, poi <b>OK</b> e ancora <b>OK</b>.</li>
-<li>Chiudi PowerPoint del tutto e riaprilo.</li>
+<li>Insert a photo on a slide and select it.</li>
+<li>Click <b>Home → Image Lab</b>: the pane shows the photo and the histogram.</li>
+<li>Choose the <b>Stage</b> style and click <b>Apply to slide</b>.</li>
 </ol>
-<p><b>Attiva l'add-in</b></p>
+<p class="note">On a company PC, IT can deploy the add-in from the Microsoft 365 admin center with just the manifest file.</p>
+<p class="note"><b>User guide (PDF):</b> <a href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" lang="it">Italiano</a> · <a href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" lang="en">English</a> · <a href="guide/image-lab-guide-es.pdf" target="_blank" rel="noopener" lang="es">Español</a> · <a href="guide/image-lab-guide-fr.pdf" target="_blank" rel="noopener" lang="fr">Français</a> · <a href="guide/image-lab-guide-de.pdf" target="_blank" rel="noopener" lang="de">Deutsch</a></p>
+</div>
+<div data-lang="es" lang="es">
+<h1>Instalar The Ultraspeaker Image Lab en PowerPoint</h1>
+<p class="us-updated">Última actualización: 12 de noviembre de 2026</p>
+<p><b>Titular:</b> Nicholas D. Charles (The Ultraspeaker) · <a href="mailto:info@theultraspeaker.com">info@theultraspeaker.com</a></p>
+<p class="note">El panel para PowerPoint está en fase de prueba y estará disponible muy pronto. Mientras tanto usa la versión web, sin instalar nada: <a href="https://niki977.github.io/ultraspeaker-image-lab/">niki977.github.io/ultraspeaker-image-lab</a>.</p>
+<p>Tres pasos, unos 10 minutos, una sola vez por ordenador. Después el botón <b>Image Lab</b> queda en la pestaña <b>Inicio</b> de PowerPoint, en el grupo <b>The Ultraspeaker</b>.</p>
+<h2>Requisitos</h2>
+<p>PowerPoint de Microsoft 365 actualizado: Windows 2601 o posterior, Mac 16.105 o posterior, o PowerPoint para la web. PowerPoint para iPad no es compatible.</p>
+<h2>1 · El archivo que hay que instalar</h2>
+<p>Solo necesitas el manifiesto <code>image-lab-manifest.xml</code>, que está en el repositorio <a href="https://github.com/niki977/ultraspeaker-image-lab">github.com/niki977/ultraspeaker-image-lab</a> o que te enviamos si lo pides. Ya apunta a <code>https://niki977.github.io/ultraspeaker-image-lab/</code>: no tienes que modificarlo.</p>
+<h2>2 · PowerPoint para Mac</h2>
 <ol>
-<li>Vai su <b>Home → Componenti aggiuntivi</b> (nelle versioni meno recenti: <b>Inserisci → Componenti aggiuntivi → I miei componenti aggiuntivi</b>).</li>
-<li>Apri la scheda <b>CARTELLA CONDIVISA</b>, seleziona <b>The Ultraspeaker Image Lab</b> e clicca <b>Aggiungi</b>.</li>
-<li>Da quel momento trovi il pulsante <b>Image Lab</b> nella scheda <b>Home</b>, nel gruppo <b>The Ultraspeaker</b>.</li>
+<li>Cierra PowerPoint (⌘Q).</li>
+<li>En el Finder pulsa <b>⌘ + Mayús + G</b> y pega: <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
+<li>Si no existe, crea una carpeta llamada <code>wef</code> y copia dentro <code>image-lab-manifest.xml</code>. Si ya hay una versión anterior, sustitúyela.</li>
+<li>Abre PowerPoint y una presentación: en <b>Inicio</b> encuentras el grupo <b>The Ultraspeaker</b> con el botón <b>Image Lab</b>.</li>
 </ol>
-<div class="note">Sul PC aziendale i criteri dell'IT possono bloccare le cartelle condivise o i componenti aggiuntivi personali. In quel caso chiedi all'IT di distribuirlo dal Microsoft 365 admin center: basta il file <code>image-lab-manifest.xml</code> (vedi sotto).</div>
-</section>
-
-<section>
-<h2><span class="n">+</span>Altri modi</h2>
+<p class="note">Si sigue apareciendo la versión antigua: cierra PowerPoint, vacía <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Library/Caches</code> y vuelve a abrirlo.</p>
+<h2>2 · PowerPoint para Windows</h2>
 <ol>
-<li><b>PowerPoint sul web</b> (office.com): <b>Home → Componenti aggiuntivi → Altri componenti aggiuntivi → I miei componenti aggiuntivi → Carica il mio componente aggiuntivo</b> e seleziona <code>image-lab-manifest.xml</code>.</li>
-<li><b>Per tutto il team aziendale</b>: l'IT può caricare <code>image-lab-manifest.xml</code> dal Microsoft 365 admin center (<b>Impostazioni → App integrate → Carica app personalizzate</b>) e distribuirlo a chi vuole, senza passaggi manuali per le singole persone.</li>
+<li>Crea una carpeta, por ejemplo <code>C:\ImageLab</code>, y copia dentro <code>image-lab-manifest.xml</code>.</li>
+<li>Clic derecho en la carpeta → <b>Propiedades → Compartir → Compartir…</b>, elige tu usuario, <b>Compartir</b> y <b>Listo</b>. Anota la ruta de red (parecida a <code>\\NOMBRE-PC\ImageLab</code>).</li>
+<li>En PowerPoint: <b>Archivo → Opciones → Centro de confianza → Configuración del Centro de confianza… → Catálogos de complementos de confianza</b>. Pega la ruta de red en <b>Dirección URL del catálogo</b>, <b>Agregar catálogo</b>, marca <b>Mostrar en el menú</b> y <b>Aceptar</b>.</li>
+<li>Cierra y vuelve a abrir PowerPoint, ve a <b>Inicio → Complementos → CARPETA COMPARTIDA</b>, selecciona <b>The Ultraspeaker Image Lab</b> y <b>Agregar</b>.</li>
 </ol>
-</section>
-
-<section>
-<h2><span class="n">?</span>Buono a sapersi</h2>
+<h2>2 · PowerPoint para la web</h2>
+<p><b>Inicio → Complementos → Más complementos → Mis complementos → Cargar mi complemento</b> y selecciona <code>image-lab-manifest.xml</code>.</p>
+<h2>3 · Pruébalo</h2>
 <ol>
-<li><b>Come si usa</b>: seleziona una foto nella slide e clicca <b>Image Lab</b>. Il pannello mostra anteprima e istogramma; muovi i cursori e premi <b>Applica alla slide</b>. Mentre regoli cambia l'anteprima nel pannello: la slide si aggiorna quando applichi.</li>
-<li><b>L'originale non si perde</b>: la foto regolata prende il posto di quella originale con la stessa posizione, misura e rotazione. L'originale resta nella slide, <b>nascosto</b> (lo vedi in <b>Home → Disponi → Riquadro di selezione</b>). Riselezionando la foto il pannello riparte dall'originale con le regolazioni salvate: puoi cambiarle senza perdere qualità, o premere <b>Originale</b> per tornare indietro.</li>
-<li><b>Livelli</b>: i tre cursori sotto l'istogramma vanno da <b>0%</b> (nero) a <b>100%</b> (bianco); i mezzitoni partono da <b>50%</b>. Doppio clic sul cursore dei mezzitoni o su un cursore di regolazione per riportarlo al valore iniziale. Gli avvisi <b>Ombre chiuse</b> e <b>Luci bruciate</b> segnalano quando una parte della foto perde dettaglio.</li>
-<li><b>Punto neutro</b>: attivalo e clicca nell'anteprima su una zona che dovrebbe essere grigia o bianca. Temperatura e tinta si correggono da sole.</li>
-<li><b>Privacy</b>: le foto non escono dal computer. Tutta l'elaborazione avviene nel pannello, senza server esterni.</li>
-<li>Per aggiornare l'add-in basta ricaricare i file nuovi su GitHub: PowerPoint userà la nuova versione alla prossima apertura. Solo se cambia <code>image-lab-manifest.xml</code> va ricopiato anche nella cartella <code>wef</code> (Mac) o nella cartella condivisa (Windows).</li>
-<li><b>Versione di prova</b> (senza installare nulla): <code>https://niki977.github.io/image-lab/</code>. Si provano i cursori sulla foto di esempio o su una propria foto (anche trascinandola nella pagina) e si scarica il risultato. Il link è pubblico: chi lo riceve può usarlo.</li>
-<li><b>Lingue:</b> l'add-in è in italiano, inglese, spagnolo, francese e tedesco. Parte nella lingua di PowerPoint e si cambia dal menu in alto a destra del pannello; la scelta resta memorizzata.</li>
+<li>Inserta una foto en una diapositiva y selecciónala.</li>
+<li>Haz clic en <b>Inicio → Image Lab</b>: el panel muestra la foto y el histograma.</li>
+<li>Elige el estilo <b>Escenario</b> y haz clic en <b>Aplicar a la diapositiva</b>.</li>
 </ol>
-</section>
-<p class="muted"><a href="support.html" style="color:inherit">Supporto</a> · <a href="privacy.html" style="color:inherit">Privacy</a> · <a href="terms.html" style="color:inherit">Condizioni d’uso</a></p>
-<p class="muted">Il carattere è Champagne &amp; Limousines di Lauren Thompson (Nymphont), indicato dal brand book di The Ultraspeaker. L’autrice lo concede gratis per uso personale e chiede una donazione per l’uso commerciale e per l’inserimento in siti web.</p>
-<p class="tag"><a href="https://www.theultraspeaker.com/" target="_blank" rel="noopener" style="display:block"><picture><source srcset="assets/logo-ultraspeaker-white.svg" media="(prefers-color-scheme: dark)"><img src="assets/logo-ultraspeaker-black.svg" alt="The Ultraspeaker"></picture></a><a href="mailto:info@theultraspeaker.com" style="color:inherit">Richiedi una consulenza</a> · info@theultraspeaker.com</p>
+<p class="note">En el ordenador de la empresa, el departamento de IT puede distribuir el complemento desde el Centro de administración de Microsoft 365 con solo el archivo del manifiesto.</p>
+<p class="note"><b>Guía de uso en PDF:</b> <a href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" lang="it">Italiano</a> · <a href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" lang="en">English</a> · <a href="guide/image-lab-guide-es.pdf" target="_blank" rel="noopener" lang="es">Español</a> · <a href="guide/image-lab-guide-fr.pdf" target="_blank" rel="noopener" lang="fr">Français</a> · <a href="guide/image-lab-guide-de.pdf" target="_blank" rel="noopener" lang="de">Deutsch</a></p>
+</div>
+<div data-lang="fr" lang="fr">
+<h1>Installer The Ultraspeaker Image Lab dans PowerPoint</h1>
+<p class="us-updated">Dernière mise à jour: 12 novembre 2026</p>
+<p><b>Titulaire:</b> Nicholas D. Charles (The Ultraspeaker) · <a href="mailto:info@theultraspeaker.com">info@theultraspeaker.com</a></p>
+<p class="note">Le volet pour PowerPoint est en phase de test et sera bientôt disponible. En attendant, utilisez la version web, sans rien installer : <a href="https://niki977.github.io/ultraspeaker-image-lab/">niki977.github.io/ultraspeaker-image-lab</a>.</p>
+<p>Trois étapes, environ 10 minutes, une seule fois par ordinateur. Ensuite, le bouton <b>Image Lab</b> reste dans l'onglet <b>Accueil</b> de PowerPoint, dans le groupe <b>The Ultraspeaker</b>.</p>
+<h2>Configuration requise</h2>
+<p>PowerPoint de Microsoft 365 à jour : Windows 2601 ou ultérieur, Mac 16.105 ou ultérieur, ou PowerPoint pour le web. PowerPoint pour iPad n'est pas pris en charge.</p>
+<h2>1 · Le fichier à installer</h2>
+<p>Il vous faut seulement le manifeste <code>image-lab-manifest.xml</code>, disponible dans le dépôt <a href="https://github.com/niki977/ultraspeaker-image-lab">github.com/niki977/ultraspeaker-image-lab</a> ou sur demande. Il pointe déjà vers <code>https://niki977.github.io/ultraspeaker-image-lab/</code> : vous n'avez pas à le modifier.</p>
+<h2>2 · PowerPoint pour Mac</h2>
+<ol>
+<li>Quittez PowerPoint (⌘Q).</li>
+<li>Dans le Finder, appuyez sur <b>⌘ + Maj + G</b> et collez : <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
+<li>S'il n'existe pas, créez un dossier nommé <code>wef</code> et copiez-y <code>image-lab-manifest.xml</code>. Si une version précédente s'y trouve, remplacez-la.</li>
+<li>Ouvrez PowerPoint et une présentation : dans <b>Accueil</b>, vous trouvez le groupe <b>The Ultraspeaker</b> avec le bouton <b>Image Lab</b>.</li>
+</ol>
+<p class="note">Si l'ancienne version apparaît encore : quittez PowerPoint, videz <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Library/Caches</code> et rouvrez-le.</p>
+<h2>2 · PowerPoint pour Windows</h2>
+<ol>
+<li>Créez un dossier, par exemple <code>C:\ImageLab</code>, et copiez-y <code>image-lab-manifest.xml</code>.</li>
+<li>Clic droit sur le dossier → <b>Propriétés → Partage → Partager…</b>, choisissez votre utilisateur, <b>Partager</b> puis <b>Terminé</b>. Notez le chemin réseau (du type <code>\\NOM-PC\ImageLab</code>).</li>
+<li>Dans PowerPoint : <b>Fichier → Options → Centre de gestion de la confidentialité → Paramètres… → Catalogues de compléments approuvés</b>. Collez le chemin réseau dans <b>URL du catalogue</b>, <b>Ajouter un catalogue</b>, cochez <b>Afficher dans le menu</b>, puis <b>OK</b>.</li>
+<li>Fermez et rouvrez PowerPoint, allez dans <b>Accueil → Compléments → DOSSIER PARTAGÉ</b>, sélectionnez <b>The Ultraspeaker Image Lab</b> et <b>Ajouter</b>.</li>
+</ol>
+<h2>2 · PowerPoint pour le web</h2>
+<p><b>Accueil → Compléments → Plus de compléments → Mes compléments → Charger mon complément</b> et sélectionnez <code>image-lab-manifest.xml</code>.</p>
+<h2>3 · Essayez</h2>
+<ol>
+<li>Insérez une photo sur une diapositive et sélectionnez-la.</li>
+<li>Cliquez sur <b>Accueil → Image Lab</b> : le volet affiche la photo et l'histogramme.</li>
+<li>Choisissez le style <b>Scène</b> et cliquez sur <b>Appliquer à la diapositive</b>.</li>
+</ol>
+<p class="note">Sur un PC d'entreprise, le service informatique peut déployer le complément depuis le Centre d'administration Microsoft 365 avec le seul fichier du manifeste.</p>
+<p class="note"><b>Guide d'utilisation en PDF:</b> <a href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" lang="it">Italiano</a> · <a href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" lang="en">English</a> · <a href="guide/image-lab-guide-es.pdf" target="_blank" rel="noopener" lang="es">Español</a> · <a href="guide/image-lab-guide-fr.pdf" target="_blank" rel="noopener" lang="fr">Français</a> · <a href="guide/image-lab-guide-de.pdf" target="_blank" rel="noopener" lang="de">Deutsch</a></p>
+</div>
+<div data-lang="de" lang="de">
+<h1>The Ultraspeaker Image Lab in PowerPoint installieren</h1>
+<p class="us-updated">Zuletzt aktualisiert: 12. November 2026</p>
+<p><b>Verantwortlich:</b> Nicholas D. Charles (The Ultraspeaker) · <a href="mailto:info@theultraspeaker.com">info@theultraspeaker.com</a></p>
+<p class="note">Der Bereich für PowerPoint wird gerade getestet und ist bald verfügbar. Nutzen Sie bis dahin die Webversion, ohne etwas zu installieren: <a href="https://niki977.github.io/ultraspeaker-image-lab/">niki977.github.io/ultraspeaker-image-lab</a>.</p>
+<p>Drei Schritte, etwa 10 Minuten, einmal pro Computer. Danach bleibt die Schaltfläche <b>Image Lab</b> auf der Registerkarte <b>Start</b> von PowerPoint, in der Gruppe <b>The Ultraspeaker</b>.</p>
+<h2>Voraussetzungen</h2>
+<p>Ein aktuelles PowerPoint aus Microsoft 365: Windows 2601 oder neuer, Mac 16.105 oder neuer oder PowerPoint für das Web. PowerPoint für iPad wird nicht unterstützt.</p>
+<h2>1 · Die zu installierende Datei</h2>
+<p>Sie brauchen nur das Manifest <code>image-lab-manifest.xml</code>, das im Repository <a href="https://github.com/niki977/ultraspeaker-image-lab">github.com/niki977/ultraspeaker-image-lab</a> liegt oder das wir Ihnen auf Anfrage schicken. Es verweist bereits auf <code>https://niki977.github.io/ultraspeaker-image-lab/</code>: Sie müssen es nicht ändern.</p>
+<h2>2 · PowerPoint für Mac</h2>
+<ol>
+<li>Beenden Sie PowerPoint (⌘Q).</li>
+<li>Drücken Sie im Finder <b>⌘ + Umschalt + G</b> und fügen Sie ein: <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Documents/</code></li>
+<li>Falls er fehlt, legen Sie einen Ordner namens <code>wef</code> an und kopieren Sie <code>image-lab-manifest.xml</code> hinein. Liegt dort schon eine ältere Version, ersetzen Sie sie.</li>
+<li>Öffnen Sie PowerPoint und eine Präsentation: Unter <b>Start</b> finden Sie die Gruppe <b>The Ultraspeaker</b> mit der Schaltfläche <b>Image Lab</b>.</li>
+</ol>
+<p class="note">Erscheint noch die alte Version: Beenden Sie PowerPoint, leeren Sie <code>~/Library/Containers/com.microsoft.Powerpoint/Data/Library/Caches</code> und öffnen Sie es erneut.</p>
+<h2>2 · PowerPoint für Windows</h2>
+<ol>
+<li>Legen Sie einen Ordner an, zum Beispiel <code>C:\ImageLab</code>, und kopieren Sie <code>image-lab-manifest.xml</code> hinein.</li>
+<li>Rechtsklick auf den Ordner → <b>Eigenschaften → Freigabe → Freigeben…</b>, wählen Sie Ihren Benutzer, <b>Freigeben</b> und <b>Fertig</b>. Notieren Sie den Netzwerkpfad (ähnlich <code>\\PC-NAME\ImageLab</code>).</li>
+<li>In PowerPoint: <b>Datei → Optionen → Trust Center → Einstellungen für das Trust Center… → Kataloge vertrauenswürdiger Add-Ins</b>. Fügen Sie den Netzwerkpfad unter <b>Katalog-URL</b> ein, <b>Katalog hinzufügen</b>, aktivieren Sie <b>Im Menü anzeigen</b>, dann <b>OK</b>.</li>
+<li>Schließen Sie PowerPoint, öffnen Sie es erneut, gehen Sie zu <b>Start → Add-Ins → FREIGEGEBENER ORDNER</b>, wählen Sie <b>The Ultraspeaker Image Lab</b> und <b>Hinzufügen</b>.</li>
+</ol>
+<h2>2 · PowerPoint für das Web</h2>
+<p><b>Start → Add-Ins → Weitere Add-Ins → Meine Add-Ins → Mein Add-In hochladen</b> und wählen Sie <code>image-lab-manifest.xml</code>.</p>
+<h2>3 · Ausprobieren</h2>
+<ol>
+<li>Fügen Sie ein Foto auf einer Folie ein und wählen Sie es aus.</li>
+<li>Klicken Sie auf <b>Start → Image Lab</b>: Der Bereich zeigt das Foto und das Histogramm.</li>
+<li>Wählen Sie den Stil <b>Bühne</b> und klicken Sie auf <b>Auf Folie anwenden</b>.</li>
+</ol>
+<p class="note">Auf einem Firmen-PC kann die IT das Add-in über das Microsoft 365 Admin Center mit nur der Manifestdatei verteilen.</p>
+<p class="note"><b>Bedienungsanleitung als PDF:</b> <a href="guide/image-lab-guide-it.pdf" target="_blank" rel="noopener" lang="it">Italiano</a> · <a href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" lang="en">English</a> · <a href="guide/image-lab-guide-es.pdf" target="_blank" rel="noopener" lang="es">Español</a> · <a href="guide/image-lab-guide-fr.pdf" target="_blank" rel="noopener" lang="fr">Français</a> · <a href="guide/image-lab-guide-de.pdf" target="_blank" rel="noopener" lang="de">Deutsch</a></p>
+</div>
 </main>
+  <footer class="us-footer">
+    <a class="us-cta" id="usCta" href="mailto:info@theultraspeaker.com"><img src="assets/arena-white.svg?v=20261112" alt=""><span data-t="cta">Richiedi un consiglio</span></a>
+    <p class="us-links"><a href="support.html" data-nav="support">Supporto</a><a href="privacy.html" data-nav="privacy">Privacy</a><a href="terms.html" data-nav="terms">Condizioni d'uso</a><a href="GUIDA-INSTALLAZIONE.html" data-nav="install">Installazione</a></p>
+  </footer>
+</div>
+<script src="legal.js?v=20261112"></script>
 </body>
 </html>

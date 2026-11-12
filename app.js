@@ -6,9 +6,6 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
-  // la lingua scelta resta salvata nel browser o in PowerPoint (se l'archiviazione non c'è, si ignora)
-  const savedLang = () => { try { return JSON.parse(localStorage.getItem("imagelab.lang")); } catch (e) { return null; } };
-  const saveLang = (l) => { try { localStorage.setItem("imagelab.lang", JSON.stringify(l)); } catch (e) { /* ignora */ } };
   let toastT;
   function toast(msg) {
     const el = $("#toast"); el.textContent = msg; el.classList.add("show");
@@ -25,25 +22,30 @@
   function canvas(w, h) { const c = document.createElement("canvas"); c.width = Math.max(1, w); c.height = Math.max(1, h); return c; }
 
   /* ---------- Lingua ---------- */
-  const I18N = window.IL_I18N;
-  const LANGS = I18N.langs.map((l) => l[0]);
-  let LANG = "it";
+  const I18N = window.IL_I18N, L = window.UltraspeakerLang;
+  let LANG = "en";
   const t = (k, vars) => {
-    let v = (I18N[LANG] && I18N[LANG][k]) || I18N.it[k] || k;
+    let v = (I18N[LANG] && I18N[LANG][k]) || I18N.en[k] || k;
     if (vars) for (const n in vars) v = v.replace("{" + n + "}", vars[n]);
     return v;
   };
+  // lingua comune a tutti i Lab (ultraspeaker.lang); la vecchia chiave del Lab si copia una volta e poi si cancella
   function detectLang() {
-    const saved = savedLang();
-    if (LANGS.includes(saved)) return saved;
-    let l = "";
-    try { if (inOffice && Office.context && Office.context.displayLanguage) l = Office.context.displayLanguage; } catch (e) { /* ignora */ }
-    if (!l) l = (navigator.languages && navigator.languages[0]) || navigator.language || "it";
-    l = l.slice(0, 2).toLowerCase();
-    return LANGS.includes(l) ? l : "en";
+    let host = null;
+    try { if (inOffice) host = Office.context.displayLanguage; } catch (e) { /* ignora */ }
+    const l = L.set(L.get("imagelab.lang", host));
+    try { localStorage.removeItem("imagelab.lang"); } catch (e) { /* memoria non disponibile */ }
+    return l;
+  }
+  // link di servizio con la lingua corrente e oggetto della mail tradotto
+  function applyLinks() {
+    $$(".us-links a").forEach((a) => { a.href = L.linkWithLang(a.getAttribute("href"), LANG); });
+    $("#usCta").href = "mailto:info@theultraspeaker.com?subject=" + encodeURIComponent(t("us.cta") + " – Image Lab");
+    $("#usGuide").href = L.guideHref("image", LANG);
   }
   function applyStatic() {
     document.documentElement.lang = LANG;
+    applyLinks();
     $$("[data-i18n]").forEach((el) => { el.textContent = t(el.dataset.i18n); });
     $$("[data-i18n-aria]").forEach((el) => el.setAttribute("aria-label", t(el.dataset.i18nAria)));
     $$("[data-i18n-title]").forEach((el) => el.setAttribute("title", t(el.dataset.i18nTitle)));
@@ -116,7 +118,7 @@
       const g = document.createElement("div");
       g.className = "group"; g.dataset.g = title;
       const h = document.createElement("div");
-      h.className = "h"; h.style.marginBottom = "2px"; h.textContent = t(title);
+      h.className = "us-label"; h.textContent = t(title);
       g.appendChild(h);
       items.forEach(([k, min, max, cls]) => {
         const row = document.createElement("div");
@@ -139,7 +141,7 @@
   // con DuoTone la saturazione sparisce (non avrebbe effetto) e temperatura e tinta diventano filtri colore
   function syncFilterLabels() {
     const f = !!P.dt;
-    $('[data-g="g.wb"] .h').textContent = t(f ? "g.filters" : "g.wb");
+    $('[data-g="g.wb"] .us-label').textContent = t(f ? "g.filters" : "g.wb");
     $('label[for="s-temp"]').textContent = t(f ? "s.tempF" : "s.temp");
     $('label[for="s-tint"]').textContent = t(f ? "s.tintF" : "s.tint");
     $("#s-sat").parentElement.hidden = f;
@@ -175,7 +177,7 @@
     box.innerHTML = "";
     Object.keys(PRESETS).forEach((k) => {
       const b = document.createElement("button");
-      b.type = "button"; b.className = "chip"; b.dataset.p = k;
+      b.type = "button"; b.className = "us-chip"; b.dataset.p = k;
       b.textContent = t("p." + k);
       b.setAttribute("aria-pressed", String(preset === k));
       // lo stile cambia le regolazioni, il ritaglio resta
@@ -185,15 +187,12 @@
   }
 
   /* ---------- Testi che cambiano con lo stato ---------- */
-  function setStatus(key, cls) {
-    const s = $("#status");
-    s.className = "status " + (cls || "");
+  function setStatus(key) {
     $("#statusText").textContent = t(key);
   }
   function updateTexts() {
-    $$("#presets .chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p === preset)));
-    $("#note").textContent = mode === "demo" ? (window.IL_ARTIFACT ? t("noteArtifact") : isMobile() ? t("noteMobile") : t("noteDemo")) : t("note");
-    $("#applyBtn").hidden = !!(mode === "demo" && window.IL_ARTIFACT);
+    $$("#presets .us-chip").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.p === preset)));
+    $("#note").textContent = mode === "demo" ? (isMobile() ? t("noteMobile") : t("noteDemo")) : t("note");
     const apply = $("#applyBtn");
     apply.textContent = busy ? t("applying") : mode === "demo" ? (shareFile ? t("shareReady") : isMobile() ? t("shareMobile") : t("applyDemo")) : t("apply");
     const dirty = snap(P) !== snap(baseline);
@@ -203,7 +202,7 @@
     rb.hidden = !showRestore;
     $("#foot").classList.toggle("three", !!showRestore);
     rb.textContent = restoreArmed ? t("restoreConfirm") : t("restore");
-    rb.classList.toggle("warn", restoreArmed);
+    rb.classList.toggle("is-warn", restoreArmed);
     $("#beforeBtn").setAttribute("aria-pressed", String(before));
     $("#pickBtn").setAttribute("aria-pressed", String(picking));
     $("#pickHint").hidden = !picking;
@@ -211,15 +210,15 @@
     $("#duoBtn").setAttribute("aria-pressed", String(!$("#duoPanel").hidden));
     if (!$("#duoPanel").hidden) syncDuoUI();
     $("#preview").classList.toggle("before", before);
-    $$(".pill").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ch === ch)));
+    $$("[data-ch]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.ch === ch)));
     $("#undoBtn").disabled = busy || hist.i <= 0;
     $("#redoBtn").disabled = busy || hist.i < 0 || hist.i >= hist.s.length - 1;
     $("#cropBtn").setAttribute("aria-pressed", String(cropMode));
     $("#rotBtn").setAttribute("aria-pressed", String(!$("#rotPanel").hidden));
     $("#rotGrid").hidden = $("#rotPanel").hidden || cropMode;
     if (!$("#rotPanel").hidden) syncRotUI();
-    if (mode === "demo") setStatus("status.demo", "");
-    else if (shape) setStatus(shape.edited ? "status.edited" : "status.selected", "");
+    if (mode === "demo") setStatus("us.web");
+    else if (shape) setStatus(shape.edited ? "status.edited" : "status.selected");
   }
 
   /* ---------- Viste ---------- */
@@ -594,7 +593,7 @@
       ["ig-post", () => "Instagram · post", 1080, 1080],
       ["ig-portrait", () => "Instagram · " + t("f.portrait"), 1080, 1350],
       ["ig-story", () => "Instagram / Facebook · " + t("f.story"), 1080, 1920],
-      ["fb-post", () => "Facebook · post", 1200, 630],
+      ["fb-post", () => "Facebook · post", 1200, 628],
       ["fb-cover", () => "Facebook · " + t("f.cover"), 851, 315],
       ["li-post", () => "LinkedIn · post", 1200, 627],
       ["li-cover", () => "LinkedIn · " + t("f.cover"), 1584, 396],
@@ -604,16 +603,16 @@
       ["pin", () => "Pinterest · pin", 1000, 1500],
       ["wa-status", () => "WhatsApp · " + t("f.status"), 1080, 1920],
     ]],
-    ["crop.g.slides", true, [
+    ["crop.g.slides", false, [
       ["slide-169", () => t("f.slide") + " 16:9", 1920, 1080],
       ["slide-43", () => t("f.slide") + " 4:3", 1440, 1080],
       ["slide-31", () => t("f.slide") + " 3:1", 1920, 640],
     ]],
     ["crop.g.print", false, [
-      ["p-10x15", () => t("f.photo") + " 10 × 15 cm", cm2px(10, 300), cm2px(15, 300)],
-      ["p-13x18", () => t("f.photo") + " 13 × 18 cm", cm2px(13, 300), cm2px(18, 300)],
-      ["p-20x30", () => t("f.photo") + " 20 × 30 cm", cm2px(20, 300), cm2px(30, 300)],
-      ["p-a4", () => "A4 21 × 29,7 cm", cm2px(21, 300), cm2px(29.7, 300)],
+      ["p-10x15", () => t("f.photo") + " 10 × 15 cm", 10, 15],
+      ["p-13x18", () => t("f.photo") + " 13 × 18 cm", 13, 18],
+      ["p-20x30", () => t("f.photo") + " 20 × 30 cm", 20, 30],
+      ["p-a4", () => "A4 21 × 29,7 cm", 21, 29.7],
     ]],
   ];
   const RATIOS = [["1:1", 1, 1], ["4:5", 4, 5], ["3:2", 3, 2], ["2:3", 2, 3], ["4:3", 4, 3], ["3:4", 3, 4], ["16:9", 16, 9], ["9:16", 9, 16], ["21:9", 21, 9]];
@@ -621,13 +620,21 @@
     // {ratio: larghezza/altezza o null, out: misura d'uscita {w, h} o null}
     if (id === "orig") return { ratio: base.w / base.h, out: null };
     const r = RATIOS.find((x) => x[0] === id); if (r) return { ratio: r[1] / r[2], out: null };
-    const f = FORMATS.flatMap((g) => g[2]).find((x) => x[0] === id); if (f) return { ratio: f[2] / f[3], out: { w: f[2], h: f[3] } };
+    // social, slide e stampa danno solo la proporzione: la foto conserva i pixel della zona scelta
+    const f = FORMATS.flatMap((g) => g[2]).find((x) => x[0] === id); if (f) return { ratio: f[2] / f[3], out: null };
     if (id === "custom") {
       const w = +$("#cW").value || 1, h = +$("#cH").value || 1, cm = $("#cU").value === "cm", dpi = clamp(+$("#cDpi").value || 300, 72, 1200);
       const ow = cm ? cm2px(w, dpi) : Math.max(1, Math.round(w)), oh = cm ? cm2px(h, dpi) : Math.max(1, Math.round(h));
       return { ratio: ow / oh, out: { w: ow, h: oh } };
     }
     return { ratio: null, out: null }; // libero
+  }
+  // 1080 × 1350 → «4:5»; i rapporti senza numeri piccoli in decimale, per esempio 1200 × 630 → «1,91:1»
+  function ratioLabel(w, h) {
+    const gcd = (a, b) => (b ? gcd(b, a % b) : a), g = gcd(w, h);
+    if (w / g <= 21 && h / g <= 21) return w / g + ":" + h / g;
+    const r = w > h ? w / h : h / w, n = (+r.toFixed(2)).toLocaleString(LANG);
+    return w > h ? n + ":1" : "1:" + n;
   }
   function buildFormats() {
     const sel = $("#cropFmt");
@@ -637,7 +644,7 @@
     const group = (key, inner) => `<optgroup label="${esc(t(key))}">${inner}</optgroup>`;
     sel.innerHTML =
       group("crop.g.ratio", opt("free", t("crop.free")) + opt("orig", t("crop.original")) + RATIOS.map((r) => opt(r[0], r[0])).join("")) +
-      FORMATS.map(([key, showPx, list]) => group(key, list.map((f) => opt(f[0], f[1]() + (showPx ? " — " + f[2] + " × " + f[3] : ""))).join(""))).join("") +
+      FORMATS.map(([key, showRatio, list]) => group(key, list.map((f) => opt(f[0], f[1]() + (showRatio ? " — " + ratioLabel(f[2], f[3]) : ""))).join(""))).join("") +
       group("crop.g.custom", opt("custom", t("crop.custom")));
     sel.value = cur;
   }
@@ -888,8 +895,8 @@
     const m = duoMode(), on = !!P.dt;
     $("#duoTitle").textContent = m === 3 ? "TriTone" : "DuoTone";
     const ob = $("#duoOn");
-    ob.textContent = t(on ? "duo.on" : "duo.off"); ob.setAttribute("aria-pressed", String(on)); ob.classList.toggle("primary", on);
-    $("#duoM2").setAttribute("aria-pressed", String(m === 2)); $("#duoM3").setAttribute("aria-pressed", String(m === 3));
+    ob.textContent = t(on ? "duo.on" : "duo.off"); ob.setAttribute("aria-pressed", String(on));
+    $("#duoM2").setAttribute("aria-selected", String(m === 2)); $("#duoM3").setAttribute("aria-selected", String(m === 3));
     // stili pronti: si ricostruiscono solo se cambiano modo o lingua
     const list = m === 3 ? TRI_PRESETS : DUO_PRESETS, key = m + LANG;
     const box = $("#duoPresets");
@@ -990,6 +997,8 @@
   /* ---------- Prova nel browser ---------- */
   const DEMO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 880 495"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5f9fd8"/><stop offset="1" stop-color="#d8ecf7"/></linearGradient><linearGradient id="m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a86b4"/><stop offset="1" stop-color="#123f5e"/></linearGradient><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0dcb2"/><stop offset="1" stop-color="#c9a878"/></linearGradient></defs><rect width="880" height="300" fill="url(#s)"/><circle cx="700" cy="104" r="40" fill="#fff4cf"/><ellipse cx="220" cy="80" rx="90" ry="18" fill="#fff" opacity=".75"/><ellipse cx="300" cy="96" rx="70" ry="14" fill="#fff" opacity=".6"/><ellipse cx="560" cy="60" rx="60" ry="12" fill="#fff" opacity=".55"/><path d="M0 262C120 220 220 240 330 252C450 262 560 236 680 250C760 258 830 252 880 256V300H0Z" fill="#7d9c8c"/><rect y="296" width="880" height="199" fill="url(#m)"/><path d="M0 170C60 150 120 158 170 190C220 220 250 262 300 300V495H0Z" fill="#2c5a36"/><path d="M0 230C70 214 140 230 190 262C230 290 250 330 262 380V495H0Z" fill="#1d4027"/><circle cx="60" cy="176" r="22" fill="#23492d"/><circle cx="100" cy="170" r="18" fill="#2d5c38"/><circle cx="138" cy="184" r="20" fill="#23492d"/><path d="M500 495C560 430 680 400 880 392V495Z" fill="url(#a)"/><rect x="340" y="336" width="300" height="10" fill="#5a3d28"/><g fill="#3f2a1b"><rect x="352" y="346" width="6" height="40"/><rect x="420" y="346" width="6" height="40"/><rect x="490" y="346" width="6" height="40"/><rect x="560" y="346" width="6" height="40"/><rect x="628" y="346" width="6" height="40"/></g><path d="M380 420h60M520 450h80M300 470h50M620 318h70M420 312h40" stroke="#bfe3f5" stroke-width="2" opacity=".55"/></svg>`;
   function freshStart(params, isEdited) {
+    // fino alla 1.3 anche social, slide e stampa fissavano i pixel d'uscita: ora solo la misura personalizzata
+    if (params && params.crop && params.crop.id !== "custom") params.crop = Object.assign({}, params.crop, { ow: null, oh: null });
     P = Object.assign(D(), params || {});
     baseline = Object.assign(D(), params || {});
     preset = isEdited ? "custom" : "nat";
@@ -1090,14 +1099,14 @@
       if (info.none || info.multi || info.notImage) {
         shape = null; lastKey = ""; orig = base = full = prev = null;
         closeCrop();
-        setStatus("status.none", "off");
+        setStatus("status.none");
         show("empty", "empty.title", info.multi ? "empty.multi" : info.notImage ? "empty.notImage" : "empty.text");
         return;
       }
       const key = info.slideId + "/" + info.id;
       if (!force && key === lastKey && orig) return; // stessa immagine: niente da ricaricare
       lastKey = key;
-      setStatus("status.loading", "busy");
+      setStatus("status.loading");
       show("loading");
 
       const edited = !!info.tags.ULAB_ORIG;
@@ -1138,7 +1147,7 @@
       if (seq !== loadSeq) return;
       console.error(e);
       lastKey = "";
-      setStatus("status.none", "off");
+      setStatus("status.none");
       show("empty", "empty.title", "empty.text");
       toast(t("toast.loadError"));
     }
@@ -1211,7 +1220,7 @@
       } finally { busy = false; updateTexts(); }
       return;
     }
-    busy = true; updateTexts(); setStatus("status.loading", "busy");
+    busy = true; updateTexts(); setStatus("status.loading");
     await wait(30); // lascia aggiornare il pulsante prima del calcolo
     try {
       const { c: fin, alpha } = finalCanvas();
@@ -1369,11 +1378,8 @@
 
   /* ---------- Avvio ---------- */
   function bindUI() {
-    const sel = $("#lang");
-    sel.innerHTML = I18N.langs.map(([k, n]) => `<option value="${k}">${n}</option>`).join("");
-    sel.value = LANG;
-    sel.addEventListener("change", () => { LANG = sel.value; saveLang(LANG); applyStatic(); if (mode === "unsupported") showUnsupported(); else if (!shape && mode === "office") { setStatus("status.none", "off"); if ($("#loading").hidden) show("empty", "empty.title", "empty.text"); } render(); });
-    $$(".pill").forEach((b) => b.addEventListener("click", () => { ch = b.dataset.ch; updateTexts(); drawHist(); }));
+    L.bindSelect($("#lang"), LANG, (code) => { LANG = code; applyStatic(); if (mode === "unsupported") showUnsupported(); else if (!shape && mode === "office") { setStatus("status.none"); if ($("#loading").hidden) show("empty", "empty.title", "empty.text"); } render(); });
+    $$("[data-ch]").forEach((b) => b.addEventListener("click", () => { ch = b.dataset.ch; updateTexts(); drawHist(); }));
     bindLevels();
     bindZoom();
     bindCrop();
@@ -1415,7 +1421,7 @@
     bindDrop();
     $("#fileIn").addEventListener("change", (e) => { loadOwnPhoto(e.target.files[0]); e.target.value = ""; });
     // In PowerPoint i link si aprono nel browser di sistema, non dentro il pannello
-    $$(".links a, a.ext").forEach((el) => el.addEventListener("click", (e) => {
+    $$(".us-links a, a.ext, #usGuide").forEach((el) => el.addEventListener("click", (e) => {
       if (!inOffice) return;
       try {
         if (Office.context.requirements.isSetSupported("OpenBrowserWindowApi", "1.1")) { e.preventDefault(); Office.context.ui.openBrowserWindow(el.href); }
@@ -1426,20 +1432,21 @@
   }
 
   function showUnsupported() {
-    setStatus("status.none", "off");
+    setStatus("status.none");
     show("empty", "unsupported.title", "unsupported.text");
   }
 
   function start() {
+    if (inOffice) document.body.classList.add("us-addin");
     LANG = detectLang();
     bindUI();
     applyStatic();
-    if (!inOffice) { document.body.classList.add("web"); startDemo(); return; }
+    if (!inOffice) { startDemo(); return; }
     let ok = false;
     try { ok = Office.context.requirements.isSetSupported("PowerPointApi", "1.10"); } catch (e) { ok = false; }
     if (!ok) { mode = "unsupported"; showUnsupported(); return; }
     mode = "office";
-    setStatus("status.none", "off");
+    setStatus("status.none");
     show("empty", "empty.title", "empty.text");
     try { Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, onSelectionChanged); } catch (e) { console.error(e); }
     loadFromSlide(true);

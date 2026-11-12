@@ -1,7 +1,8 @@
 {
   "name": "The Ultraspeaker Image Lab",
   "short_name": "Image Lab",
-  "start_url": "./index.html",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#000000",

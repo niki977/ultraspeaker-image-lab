@@ -4,260 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Ultraspeaker Image Lab</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/image-lab-icon-32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="assets/image-lab-icon-16.png">
-<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="apple-touch-icon" href="assets/image-lab-icon-180.png">
-<link rel="manifest" href="site.webmanifest">
+<meta name="description" content="Adjust the photos on your slides like in a photo editor: histogram, levels, light and colour, crop, rotation and DuoTone. The original always stays in the presentation.">
 <meta name="theme-color" content="#000000">
-<!-- Office.js: in PowerPoint collega il pannello alla presentazione. Nel browser il pannello parte in modalità prova. -->
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-title" content="Image Lab">
+<meta name="application-name" content="Image Lab">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=20261112">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/image-lab-icon-32.png?v=20261112">
+<link rel="apple-touch-icon" href="assets/image-lab-icon-180.png?v=20261112">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="shared/ultraspeaker-lab.css?v=20261112">
+<link rel="stylesheet" href="css/app.css?v=20261112">
+<!-- Office.js: in PowerPoint collega il pannello alla presentazione; se non si carica, parte la versione web -->
 <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-<style>
-/* Champagne & Limousines (brand book The Ultraspeaker, p. 17): Regular, Italic, Bold, Bold Italic dalla cartella fonts */
-@font-face{font-family:"Champagne & Limousines";font-weight:100 549;font-style:normal;font-display:swap;src:url(fonts/champagne-limousines-regular.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:550 900;font-style:normal;font-display:swap;src:url(fonts/champagne-limousines-bold.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:100 549;font-style:italic;font-display:swap;src:url(fonts/champagne-limousines-italic.woff2) format("woff2")}
-@font-face{font-family:"Champagne & Limousines";font-weight:550 900;font-style:italic;font-display:swap;src:url(fonts/champagne-limousines-bolditalic.woff2) format("woff2")}
-:root{
-  --bg:#000000; --surface:#0c0c0c; --surface-2:#141414; --ink:#ffffff; --ink-2:#d0d0d0; --ink-3:#8e8e8e;
-  --line:#1f1f1f; --line-2:#2a2a2a; --line-3:#3a3a3a; --danger:#b3261e; --ok:#7ddc8a;
-  color-scheme:dark;
-}
-*{box-sizing:border-box}
-html{scrollbar-gutter:stable}
-html,body{margin:0;min-height:100%}
-body{background:var(--bg);color:var(--ink);font:400 14px/1.45 "Champagne & Limousines","Avenir Next","Segoe UI",-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-button,select,input{font:inherit;color:inherit}
-button{cursor:pointer}
-button:disabled{cursor:default;opacity:.45}
-:focus-visible{outline:2px solid #ffffff;outline-offset:2px}
-.app{min-height:100vh;display:flex;flex-direction:column}
-/* Versione web su computer: colonna centrata, non a tutta pagina */
-body.web{background:#0a0a0a}
-body.web .app{width:100%;max-width:760px;margin:0 auto;background:var(--bg);border-inline:1px solid var(--line)}
-body.web .preview{max-height:46vh}
-@media (max-width:560px){body.web .preview{max-height:38vh}}
-
-/* Intestazione */
-.brand{flex:none;padding:14px 18px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
-.brand-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.brandlink{display:block;width:min(190px,58%);border-radius:6px}
-.brandlink:hover{opacity:.85}
-.lockup{display:block;width:100%;height:auto;margin-top:2px}
-.lang{display:flex;align-items:center;gap:6px;flex:none}
-.lang svg{width:16px;height:16px;stroke:#9a9a9a;fill:none;stroke-width:1.8}
-.lang select{height:30px;padding:0 6px;border-radius:7px;background:#111111;border:1px solid #333333;font-size:13px;font-weight:600}
-.status{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#bdbdbd}
-.status i{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:none}
-.status.off i{background:#555555}
-.status.busy i{background:#ffcf80}
-
-/* Contenuto: scorre tutta la pagina, la barra di scorrimento va dall'alto in basso e fa da bordo destro */
-.scroll{flex:1;padding:14px 18px 10px;display:flex;flex-direction:column;gap:16px}
-.h{font-size:11.5px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;line-height:1.2;color:var(--ink-3)} /* etichette: Bold, maiuscolo, +320 */
-
-/* Anteprima sempre visibile: resta ferma in alto mentre il resto del pannello scorre */
-.pin{position:sticky;top:0;z-index:6;background:var(--bg);margin:-14px -18px 0;padding:10px 18px 10px;border-bottom:1px solid var(--line)}
-/* Riquadro dell'anteprima: segue la forma della foto fino a 21:9; le foto più larghe restano intere con spazio sopra e sotto */
-.pvrow{display:flex;gap:8px;align-items:stretch}
-.preview{position:relative;flex:1;min-width:0;aspect-ratio:var(--ar,16/9);max-height:min(200px,32vh);border-radius:8px;overflow:hidden;background:repeating-conic-gradient(#1a1a1a 0 25%,#111111 0 50%) 0 0/16px 16px;border:1px solid var(--line-2);touch-action:pan-x pan-y}
-.preview canvas{position:absolute;inset:0;display:block;width:100%;height:100%}
-.preview.zoomed canvas{cursor:zoom-in}
-.preview.panning canvas{cursor:grabbing}
-/* Cursore verticale dello zoom (mouse e trackpad): in basso la foto intera, in alto ingrandita */
-.zoombar{flex:none;width:22px;display:flex;justify-content:center;padding:6px 0;cursor:ns-resize;touch-action:none;border-radius:8px}
-.zoombar:focus-visible{outline:2px solid #ffffff;outline-offset:1px}
-.ztrack{position:relative;width:4px;height:100%;border-radius:2px;background:var(--line-3)}
-.zfill{position:absolute;left:0;right:0;bottom:0;border-radius:2px;background:#ffffff}
-.zthumb{position:absolute;left:50%;width:16px;height:16px;margin:0 0 -8px -8px;border-radius:50%;background:#ffffff;border:2px solid #000000;box-shadow:0 0 0 1px #ffffff}
-@media (hover:none) and (pointer:coarse){.zoombar{display:none}}
-/* Barra strumenti sotto l'anteprima */
-.tools{display:flex;align-items:center;gap:6px;margin-top:8px}
-.tb{height:30px;min-width:30px;padding:0 8px;border-radius:7px;border:1px solid #333333;background:transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:600;white-space:nowrap}
-.tools .tb{flex:none}
-@media (max-width:420px){.tools .tb span{display:none}.tools .tb{padding:0 7px}}
-.tb svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex:none}
-.tb[aria-pressed="true"]{background:#ffffff;color:#000000;border-color:#ffffff}
-.tb.lbl{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--ink-2)}
-.zhint{font-size:11.5px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-/* Rotazione */
-.rotgrid{position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(90deg,rgba(255,255,255,.32) 1px,transparent 1px),linear-gradient(180deg,rgba(255,255,255,.32) 1px,transparent 1px);
-  background-size:calc(100% / 6) calc(100% / 4);background-position:-0.5px -0.5px}
-.chip.ic{display:inline-flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.chip.ic svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
-.rotrow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
-.croppanel input.sl{height:22px;border:0;background:transparent;padding:0;border-radius:0}
-@media (max-width:420px){.rotrow{grid-template-columns:minmax(0,1fr) auto}.rotrow input.sl{grid-column:1/-1;grid-row:2}}
-.rotrow label{font-size:13.5px;font-weight:600;color:#e6e6e6}
-.spin{display:flex;align-items:center;gap:3px}
-.croppanel .spin input{width:62px;text-align:right;font-variant-numeric:tabular-nums;-moz-appearance:textfield;appearance:textfield}
-.spin input::-webkit-inner-spin-button,.spin input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
-.spin .deg{color:var(--ink-2);font-size:13.5px}
-.arrows{display:flex;flex-direction:column;gap:2px;margin-left:3px}
-.arrows button{width:26px;height:15px;border-radius:4px;border:1px solid #333333;background:#111111;display:flex;align-items:center;justify-content:center;padding:0;touch-action:manipulation}
-.arrows button svg{width:10px;height:7px;fill:none;stroke:currentColor;stroke-width:1.8}
-.arrows button:active{background:#ffffff;color:#000000}
-@media (pointer:coarse){.arrows button{width:34px;height:20px}}
-/* DuoTone / TriTone */
-.duohead{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.ghost.sm{height:28px;padding:0 10px;font-size:12.5px}
-.seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border:1px solid #333333;border-radius:8px;overflow:hidden}
-.seg button{height:32px;border:0;background:transparent;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--ink-2)}
-.seg button+button{border-left:1px solid #333333}
-.seg button[aria-pressed="true"]{background:#ffffff;color:#000000}
-.dpre{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px 8px}
-.sw{display:flex;flex-direction:column;gap:5px;padding:0;border:0;background:transparent;font-size:12px;font-weight:600;color:var(--ink-2);text-align:left;min-width:0}
-.sw i{display:block;height:28px;border-radius:7px;border:1px solid #333333}
-.sw span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sw[aria-pressed="true"]{color:#ffffff}
-.sw[aria-pressed="true"] i{outline:2px solid #ffffff;outline-offset:2px}
-.dcols{display:flex;flex-direction:column;gap:10px}
-.dcol{display:flex;flex-direction:column;gap:6px}
-.dlab{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13.5px;font-weight:600;color:#e6e6e6}
-.tchk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
-.tchk input{width:16px;height:16px;margin:0;accent-color:#ffffff}
-.dctl{display:grid;grid-template-columns:40px minmax(0,1fr) 34px;gap:6px;align-items:center}
-.croppanel .cpick{width:40px;height:32px;padding:3px;border:1px solid #333333;border-radius:7px;background:#111111;cursor:pointer}
-.cpick::-webkit-color-swatch-wrapper{padding:0}
-.cpick::-webkit-color-swatch{border:0;border-radius:4px}
-.cpick::-moz-color-swatch{border:0;border-radius:4px}
-.croppanel .hex{letter-spacing:.06em;text-transform:uppercase;font-variant-numeric:tabular-nums}
-.ib{width:34px;height:32px;border-radius:7px;border:1px solid #333333;background:transparent;display:flex;align-items:center;justify-content:center;padding:0}
-.ib svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2}
-.ib[aria-pressed="true"]{background:#ffffff;color:#000000;border-color:#ffffff}
-.dcol.transp .dctl{opacity:.35;pointer-events:none}
-.dswap{display:flex;justify-content:center}
-/* Ritaglio */
-.cropbox{position:absolute;border:1.5px solid #ffffff;box-shadow:0 0 0 9999px rgba(0,0,0,.58);cursor:move;touch-action:none;
-  background-image:linear-gradient(90deg,transparent calc(33.33% - .5px),rgba(255,255,255,.45) calc(33.33% - .5px),rgba(255,255,255,.45) calc(33.33% + .5px),transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),rgba(255,255,255,.45) calc(66.66% - .5px),rgba(255,255,255,.45) calc(66.66% + .5px),transparent calc(66.66% + .5px)),
-  linear-gradient(180deg,transparent calc(33.33% - .5px),rgba(255,255,255,.45) calc(33.33% - .5px),rgba(255,255,255,.45) calc(33.33% + .5px),transparent calc(33.33% + .5px),transparent calc(66.66% - .5px),rgba(255,255,255,.45) calc(66.66% - .5px),rgba(255,255,255,.45) calc(66.66% + .5px),transparent calc(66.66% + .5px))}
-.ch{position:absolute;width:16px;height:16px;background:#ffffff;border:2px solid #000000;border-radius:4px;touch-action:none}
-.ch.nw{left:-2px;top:-2px;cursor:nwse-resize}.ch.ne{right:-2px;top:-2px;cursor:nesw-resize}
-.ch.sw{left:-2px;bottom:-2px;cursor:nesw-resize}.ch.se{right:-2px;bottom:-2px;cursor:nwse-resize}
-@media (pointer:coarse){.ch{width:24px;height:24px}}
-.croppanel{display:flex;flex-direction:column;gap:10px;background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:12px}
-.fld{display:flex;flex-direction:column;gap:5px;font-size:12.5px;color:var(--ink-2)}
-.fld select,.fld input,.croppanel select,.croppanel input{height:32px;border-radius:7px;background:#111111;border:1px solid #333333;padding:0 8px;font-size:13.5px;font-weight:600;min-width:0}
-.cust{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr) auto;gap:6px;align-items:end}
-.cust .x{padding-bottom:8px;color:var(--ink-3)}
-.warnline{margin:0;font-size:12.5px;line-height:1.45;color:#ffcf80}
-.ghost.primary{background:#ffffff;color:#000000;border-color:#ffffff}
-.preview.picking canvas{cursor:crosshair}
-.badge-orig{position:absolute;left:8px;top:8px;padding:4px 8px;border-radius:5px;background:rgba(0,0,0,.72);font-size:11px;font-weight:700;letter-spacing:.12em;display:none}
-.preview.before .badge-orig{display:block}
-
-.hist-head{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.pills{display:flex;gap:4px}
-.pill{height:28px;padding:0 10px;border-radius:14px;border:1px solid #333333;background:transparent;color:#bdbdbd;font-size:12px;font-weight:700;letter-spacing:.08em}
-.pill[aria-pressed="true"]{background:#ffffff;color:#000000;border-color:#ffffff}
-.hist{position:relative;width:100%;height:132px;border:1px solid #262626;border-radius:8px;background:var(--surface);overflow:hidden}
-.hist canvas{display:block;width:100%;height:100%}
-.clip{position:absolute;top:6px;font-size:10.5px;font-weight:700;letter-spacing:.1em;background:var(--danger);padding:2px 5px;border-radius:3px;display:none}
-.clip.lo{left:6px}.clip.hi{right:6px}
-.clip.on{display:block}
-
-.levels{display:flex;flex-direction:column;gap:4px}
-.ramp{height:6px;width:100%;border-radius:3px;background:linear-gradient(90deg,#000000,#ffffff);border:1px solid var(--line-2)}
-.lvwrap{position:relative;width:calc(100% + 14px);height:24px;margin-left:-7px}
-.lv{position:absolute;left:0;top:0;width:100%;height:24px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;pointer-events:none}
-.lv:focus-visible{outline:none}
-.lv::-webkit-slider-runnable-track{height:24px;background:transparent}
-.lv::-moz-range-track{height:24px;background:transparent}
-.lv::-webkit-slider-thumb{-webkit-appearance:none;pointer-events:auto;width:14px;height:22px;border-radius:4px;border:1.5px solid #ffffff;cursor:ew-resize}
-.lv::-moz-range-thumb{pointer-events:auto;width:11px;height:19px;border-radius:4px;border:1.5px solid #ffffff;cursor:ew-resize}
-.lv:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px #4f8dff}
-.lv:focus-visible::-moz-range-thumb{box-shadow:0 0 0 2px #4f8dff}
-.lv.b::-webkit-slider-thumb{background:#000000}.lv.b::-moz-range-thumb{background:#000000}
-.lv.m::-webkit-slider-thumb{background:#7a7a7a}.lv.m::-moz-range-thumb{background:#7a7a7a}
-.lv.w::-webkit-slider-thumb{background:#ffffff;border-color:#000000;box-shadow:0 0 0 1px #ffffff}
-.lv.w::-moz-range-thumb{background:#ffffff;border-color:#000000}
-.lvlabels{position:relative;width:100%;height:32px;margin-top:2px;font-variant-numeric:tabular-nums}
-.lvl{position:absolute;top:0;width:96px;display:flex;flex-direction:column;gap:2px}
-.lvl b{font-size:14.5px;font-weight:700;line-height:1}
-.lvl span{font-size:10.5px;letter-spacing:.12em;line-height:1.2;color:var(--ink-3);white-space:nowrap}
-
-.row{display:flex;gap:8px;align-items:center}
-.ghost{height:34px;padding:0 11px;border-radius:8px;border:1px solid #333333;background:transparent;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
-.ghost svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;flex:none}
-.ghost[aria-pressed="true"]{background:#ffffff;color:#000000;border-color:#ffffff}
-.ghost.icon{margin-left:auto;padding:0 9px}
-.hint{font-size:12.5px;line-height:1.45;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line-2);border-radius:8px;padding:8px 10px}
-
-.chips{display:flex;gap:6px;flex-wrap:wrap}
-.qbox{display:flex;flex-direction:column;gap:8px}
-.qbtn{height:44px;border-radius:10px;border:1px solid #ffffff;background:transparent;font-size:14.5px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:9px}
-.qbtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8}
-.qbtn[aria-pressed="true"]{background:#ffffff;color:#000000}
-.chip{height:30px;padding:0 12px;border-radius:8px;border:1px solid #333333;background:var(--surface-2);color:var(--ink-2);font-size:13px;font-weight:600;white-space:nowrap}
-.chip[aria-pressed="true"]{border-color:#ffffff;color:#ffffff;background:#262626}
-.sep{height:1px;background:var(--line);flex:none}
-
-.group{display:flex;flex-direction:column;gap:4px}
-.group + .group{margin-top:10px}
-.srow{display:grid;grid-template-columns:112px minmax(0,1fr) 44px;align-items:center;gap:10px;min-height:30px}
-.srow label{font-size:13.5px;font-weight:600;line-height:1.2;color:#e6e6e6}
-.srow output{font-size:13.5px;text-align:right;color:#bdbdbd;font-variant-numeric:tabular-nums}
-.sl{-webkit-appearance:none;appearance:none;width:100%;height:22px;margin:0;background:transparent}
-.sl:focus-visible{outline:2px solid #ffffff;outline-offset:3px;border-radius:4px}
-.sl::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:var(--line-3)}
-.sl::-moz-range-track{height:4px;border-radius:2px;background:var(--line-3)}
-.sl.bi::-webkit-slider-runnable-track{background:linear-gradient(90deg,#3a3a3a 0,#3a3a3a calc(50% - 1px),#8e8e8e calc(50% - 1px),#8e8e8e calc(50% + 1px),#3a3a3a calc(50% + 1px))}
-.sl.bi::-moz-range-track{background:linear-gradient(90deg,#3a3a3a 0,#3a3a3a calc(50% - 1px),#8e8e8e calc(50% - 1px),#8e8e8e calc(50% + 1px),#3a3a3a calc(50% + 1px))}
-.sl.temp::-webkit-slider-runnable-track{background:linear-gradient(90deg,#4f8dff,#3a3a3a 50%,#ffb04a)}
-.sl.temp::-moz-range-track{background:linear-gradient(90deg,#4f8dff,#3a3a3a 50%,#ffb04a)}
-.sl.tint::-webkit-slider-runnable-track{background:linear-gradient(90deg,#3fd46a,#3a3a3a 50%,#e056d3)}
-.sl.tint::-moz-range-track{background:linear-gradient(90deg,#3fd46a,#3a3a3a 50%,#e056d3)}
-.sl::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;margin-top:-6px;border-radius:50%;background:#ffffff;border:2px solid #000000;box-shadow:0 0 0 1px #ffffff}
-.sl::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#ffffff;border:2px solid #000000;box-shadow:0 0 0 1px #ffffff}
-.note{font-size:12px;line-height:1.5;color:var(--ink-3)}
-.links{margin:-8px 0 0}.links a{color:var(--ink-2)}
-
-.foot{flex:none;position:sticky;bottom:0;z-index:5;background:var(--bg);padding:12px 18px 14px;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.foot.three{grid-template-columns:repeat(3,minmax(0,1fr))}
-.fb{height:42px;border-radius:10px;font-size:13.5px;font-weight:700;padding:0 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fb.sec{background:transparent;border:1px solid var(--line-3)}
-.fb.sec[aria-pressed="true"]{background:#262626;border-color:#ffffff}
-.fb.warn{border-color:#ffcf80;color:#ffcf80}
-.fb.pri{grid-column:1/-1;background:#ffffff;color:#000000;border:1px solid #ffffff}
-
-/* Stati vuoti */
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:32px 28px}
-.empty img{width:72px;opacity:.9}
-.empty h2{margin:4px 0 0;font-size:16.5px;font-weight:600}
-.empty p{margin:0;color:var(--ink-3);font-size:13.5px;max-width:260px}
-[hidden]{display:none!important}
-
-.drop{position:fixed;inset:10px;z-index:20;border:2px dashed #ffffff;border-radius:14px;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:24px;font-size:15.5px;font-weight:700;pointer-events:none}
-.drop img{width:70px;height:auto}
-.preview.droppable{outline:1px dashed #555555;outline-offset:4px}
-@media (pointer:coarse){.preview.droppable{outline:none}[data-i18n="orDrop"]{display:none}}
-.toast{position:fixed;left:50%;bottom:130px;transform:translate(-50%,12px);background:#ffffff;color:#000000;font-weight:700;font-size:13px;padding:9px 14px;border-radius:9px;opacity:0;pointer-events:none;transition:.2s;max-width:calc(100% - 32px);text-align:center}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.spinner{width:22px;height:22px;border-radius:50%;border:2px solid #333333;border-top-color:#ffffff;animation:sp 0.8s linear infinite}
-@keyframes sp{to{transform:rotate(360deg)}}
-</style>
+<script src="shared/ultraspeaker-lang.js?v=20261112"></script>
 </head>
 <body>
-<div class="app">
-  <header class="brand">
-    <div class="brand-row">
-      <a class="ext brandlink" href="https://www.theultraspeaker.com/" target="_blank" rel="noopener" title="theultraspeaker.com"><img class="lockup" src="assets/logo-image-lab-white.svg" alt="The Ultraspeaker Image Lab"></a>
-      <label class="lang">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>
-        <select id="lang" data-i18n-aria="lang"></select>
-      </label>
+<div class="app us-page us-page--narrow">
+  <header class="us-header">
+    <div>
+      <a class="us-logo ext" href="https://www.theultraspeaker.com" target="_blank" rel="noopener"><img src="assets/logo-image-lab-white.svg?v=20261112" alt="The Ultraspeaker Image Lab" width="167" height="60"></a>
+      <p class="us-subtitle" id="status"><i class="us-dot"></i><span id="statusText"></span></p>
     </div>
-    <div class="status off" id="status"><i></i><span id="statusText"></span></div>
+    <div class="us-header-tools">
+      <label class="us-lang">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+        <span class="us-sr" data-i18n="lang"></span><select id="lang"></select>
+      </label>
+      <!-- Su telefono e nel pannello si vede solo l'icona: il nome resta in aria-label -->
+      <a class="us-btn us-guide" id="usGuide" href="guide/image-lab-guide-en.pdf" target="_blank" rel="noopener" data-i18n-aria="us.guide.title"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><span data-i18n="us.guide"></span></a>
+    </div>
   </header>
 
   <!-- Nessuna immagine / versione non supportata / caricamento -->
-  <section class="empty" id="empty">
+  <section class="empty us-spotlight" id="empty">
     <img src="assets/image-lab-logetto.svg" alt="">
     <h2 id="emptyTitle"></h2>
     <p id="emptyText"></p>
   </section>
-  <section class="empty" id="loading" hidden>
+  <section class="empty us-spotlight" id="loading" hidden>
     <div class="spinner" aria-hidden="true"></div>
     <p data-i18n="status.loading"></p>
   </section>
@@ -279,24 +64,24 @@ body.web .preview{max-height:46vh}
         </div>
       </div>
       <div class="tools">
-        <button type="button" class="tb" id="undoBtn" data-i18n-aria="undo" data-i18n-title="undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-        <button type="button" class="tb" id="redoBtn" data-i18n-aria="redo" data-i18n-title="redo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
-        <button type="button" class="tb" id="cropBtn" aria-pressed="false" data-i18n-title="crop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg><span data-i18n="crop"></span></button>
-        <button type="button" class="tb" id="rotBtn" aria-pressed="false" aria-controls="rotPanel" data-i18n-title="rotate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span data-i18n="rotate"></span></button>
-        <button type="button" class="tb" id="duoBtn" aria-pressed="false" aria-controls="duoPanel" data-i18n-title="duo.tool" data-i18n-aria="duo.tool"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg></button>
+        <button type="button" class="us-btn us-btn--icon" id="undoBtn" data-i18n-aria="undo" data-i18n-title="undo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+        <button type="button" class="us-btn us-btn--icon" id="redoBtn" data-i18n-aria="redo" data-i18n-title="redo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        <button type="button" class="us-btn" id="cropBtn" aria-pressed="false" data-i18n-title="crop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg><span data-i18n="crop"></span></button>
+        <button type="button" class="us-btn" id="rotBtn" aria-pressed="false" aria-controls="rotPanel" data-i18n-title="rotate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span data-i18n="rotate"></span></button>
+        <button type="button" class="us-btn us-btn--icon" id="duoBtn" aria-pressed="false" aria-controls="duoPanel" data-i18n-title="duo.tool" data-i18n-aria="duo.tool"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg></button>
         <span class="zhint" id="zoomHint"></span>
-        <button type="button" class="tb lbl" id="zoomLbl" data-i18n-title="fitTitle"></button>
+        <button type="button" class="us-btn zoom-lbl" id="zoomLbl" data-i18n-title="fitTitle"></button>
       </div>
     </div>
 
-    <section class="croppanel" id="duoPanel" hidden>
+    <section class="us-panel tool-panel" id="duoPanel" hidden>
       <div class="duohead">
-        <div class="h" id="duoTitle"></div>
-        <button type="button" class="ghost sm" id="duoOn" aria-pressed="false"></button>
+        <div class="us-label" id="duoTitle"></div>
+        <button type="button" class="us-chip" id="duoOn" aria-pressed="false"></button>
       </div>
-      <div class="seg" role="group" data-i18n-aria="duo">
-        <button type="button" id="duoM2" aria-pressed="true">DuoTone</button>
-        <button type="button" id="duoM3" aria-pressed="false">TriTone</button>
+      <div class="us-tabs" role="tablist" data-i18n-aria="duo">
+        <button type="button" class="us-tab" role="tab" id="duoM2" aria-selected="true">DuoTone</button>
+        <button type="button" class="us-tab" role="tab" id="duoM3" aria-selected="false">TriTone</button>
       </div>
       <div class="dpre" id="duoPresets"></div>
       <div class="dcols">
@@ -304,51 +89,51 @@ body.web .preview{max-height:46vh}
           <div class="dlab"><span data-i18n="duo.shadows"></span><label class="tchk"><input type="checkbox" id="dTrS"><span data-i18n="duo.transparent"></span></label></div>
           <div class="dctl">
             <input type="color" class="cpick" id="dcS" data-i18n-aria="duo.shadows">
-            <input type="text" class="hex" id="dhS" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.shadows">
-            <button type="button" class="ib" id="dpS" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
+            <input type="text" class="us-field hex" id="dhS" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.shadows">
+            <button type="button" class="us-btn us-btn--icon" id="dpS" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
           </div>
         </div>
         <div class="dcol" id="dRowM">
           <div class="dlab"><span data-i18n="duo.mids"></span></div>
           <div class="dctl">
             <input type="color" class="cpick" id="dcM" data-i18n-aria="duo.mids">
-            <input type="text" class="hex" id="dhM" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.mids">
-            <button type="button" class="ib" id="dpM" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
+            <input type="text" class="us-field hex" id="dhM" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.mids">
+            <button type="button" class="us-btn us-btn--icon" id="dpM" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
           </div>
         </div>
-        <div class="dswap"><button type="button" class="ghost sm" id="duoSwap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg><span data-i18n="duo.swap"></span></button></div>
+        <div class="dswap"><button type="button" class="us-btn" id="duoSwap"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg><span data-i18n="duo.swap"></span></button></div>
         <div class="dcol" id="dRowH">
           <div class="dlab"><span data-i18n="duo.lights"></span><label class="tchk"><input type="checkbox" id="dTrH"><span data-i18n="duo.transparent"></span></label></div>
           <div class="dctl">
             <input type="color" class="cpick" id="dcH" data-i18n-aria="duo.lights">
-            <input type="text" class="hex" id="dhH" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.lights">
-            <button type="button" class="ib" id="dpH" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
+            <input type="text" class="us-field hex" id="dhH" maxlength="7" spellcheck="false" autocomplete="off" data-i18n-aria="duo.lights">
+            <button type="button" class="us-btn us-btn--icon" id="dpH" data-i18n-aria="duo.pick" data-i18n-title="duo.pick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg></button>
           </div>
         </div>
       </div>
       <div class="srow" id="dMidRow"><label for="dMid" data-i18n="duo.mid"></label><input id="dMid" class="sl" type="range" min="5" max="95" step="1"><output for="dMid" id="dMidOut"></output></div>
       <div class="srow"><label for="dAmt" data-i18n="duo.amount"></label><input id="dAmt" class="sl" type="range" min="0" max="100" step="1"><output for="dAmt" id="dAmtOut"></output></div>
-      <div class="hint" id="duoPickHint" data-i18n="duo.pickHint" hidden></div>
-      <p class="note" data-i18n="duo.note" style="margin:0"></p>
-      <p class="warnline" id="duoTrNote" data-i18n="duo.trNote" hidden></p>
-      <div class="row" style="flex-wrap:wrap">
-        <button type="button" class="ghost" id="duoRemove" data-i18n="duo.remove"></button>
-        <span style="flex:1"></span>
-        <button type="button" class="ghost primary" id="duoDone" data-i18n="rot.done"></button>
+      <div class="us-note" id="duoPickHint" data-i18n="duo.pickHint" hidden></div>
+      <p class="note" data-i18n="duo.note"></p>
+      <p class="us-note us-note--warn" id="duoTrNote" data-i18n="duo.trNote" hidden></p>
+      <div class="row">
+        <button type="button" class="us-btn" id="duoRemove" data-i18n="duo.remove"></button>
+        <span class="push"></span>
+        <button type="button" class="us-btn us-btn--primary" id="duoDone" data-i18n="rot.done"></button>
       </div>
     </section>
-    <section class="croppanel" id="rotPanel" hidden>
-      <div class="h" data-i18n="rot.title"></div>
+    <section class="us-panel tool-panel" id="rotPanel" hidden>
+      <div class="us-label" data-i18n="rot.title"></div>
       <div class="chips">
-        <button type="button" class="chip ic" id="rotL" data-i18n-aria="rot.left" data-i18n-title="rot.left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.34-5.66"/><path d="M4 4v5h5"/></svg>90°</button>
-        <button type="button" class="chip ic" id="rotR" data-i18n-aria="rot.right" data-i18n-title="rot.right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>90°</button>
-        <button type="button" class="chip ic" id="rot180" data-i18n-aria="rot.half" data-i18n-title="rot.half"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>180°</button>
+        <button type="button" class="us-chip ic" id="rotL" data-i18n-aria="rot.left" data-i18n-title="rot.left"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.34-5.66"/><path d="M4 4v5h5"/></svg>90°</button>
+        <button type="button" class="us-chip ic" id="rotR" data-i18n-aria="rot.right" data-i18n-title="rot.right"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>90°</button>
+        <button type="button" class="us-chip ic" id="rot180" data-i18n-aria="rot.half" data-i18n-title="rot.half"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3"/></svg>180°</button>
       </div>
       <div class="rotrow">
         <label for="rotFine" data-i18n="rot.straighten"></label>
         <input id="rotFine" class="sl bi" type="range" min="-45" max="45" step="0.1" value="0">
         <div class="spin">
-          <input id="rotNum" type="number" min="-45" max="45" step="0.1" value="0" inputmode="decimal" data-i18n-aria="rot.straighten">
+          <input id="rotNum" class="us-field" type="number" min="-45" max="45" step="0.1" value="0" inputmode="decimal" data-i18n-aria="rot.straighten">
           <span class="deg">°</span>
           <div class="arrows">
             <button type="button" id="rotUp" data-i18n-aria="rot.up" data-i18n-title="rot.up"><svg viewBox="0 0 12 8" aria-hidden="true"><path d="M2 6.5L6 2.5l4 4"/></svg></button>
@@ -356,52 +141,52 @@ body.web .preview{max-height:46vh}
           </div>
         </div>
       </div>
-      <p class="note" id="rotInfo" style="margin:0"></p>
-      <p class="note" data-i18n="rot.hint" style="margin:0"></p>
-      <div class="row" style="flex-wrap:wrap">
-        <button type="button" class="ghost" id="rotReset" data-i18n="rot.reset"></button>
-        <span style="flex:1"></span>
-        <button type="button" class="ghost primary" id="rotDone" data-i18n="rot.done"></button>
+      <p class="note" id="rotInfo"></p>
+      <p class="note" data-i18n="rot.hint"></p>
+      <div class="row">
+        <button type="button" class="us-btn" id="rotReset" data-i18n="rot.reset"></button>
+        <span class="push"></span>
+        <button type="button" class="us-btn us-btn--primary" id="rotDone" data-i18n="rot.done"></button>
       </div>
     </section>
-    <section class="croppanel" id="cropPanel" hidden>
-      <div class="h" data-i18n="crop.title"></div>
-      <label class="fld"><span data-i18n="crop.format"></span><select id="cropFmt"></select></label>
+    <section class="us-panel tool-panel" id="cropPanel" hidden>
+      <div class="us-label" data-i18n="crop.title"></div>
+      <label class="fld"><span data-i18n="crop.format"></span><select id="cropFmt" class="us-field"></select></label>
       <div class="cust" id="cropCustom" hidden>
-        <label class="fld"><span data-i18n="crop.width"></span><input id="cW" type="number" min="1" step="any" inputmode="decimal"></label>
+        <label class="fld"><span data-i18n="crop.width"></span><input id="cW" class="us-field" type="number" min="1" step="any" inputmode="decimal"></label>
         <span class="x">×</span>
-        <label class="fld"><span data-i18n="crop.height"></span><input id="cH" type="number" min="1" step="any" inputmode="decimal"></label>
-        <label class="fld"><span data-i18n="crop.unit"></span><select id="cU"><option value="px">px</option><option value="cm">cm</option></select></label>
-        <label class="fld" id="cDpiWrap" hidden><span data-i18n="crop.dpi"></span><input id="cDpi" type="number" min="72" max="1200" step="1" value="300" inputmode="numeric"></label>
+        <label class="fld"><span data-i18n="crop.height"></span><input id="cH" class="us-field" type="number" min="1" step="any" inputmode="decimal"></label>
+        <label class="fld"><span data-i18n="crop.unit"></span><select id="cU" class="us-field"><option value="px">px</option><option value="cm">cm</option></select></label>
+        <label class="fld" id="cDpiWrap" hidden><span data-i18n="crop.dpi"></span><input id="cDpi" class="us-field" type="number" min="72" max="1200" step="1" value="300" inputmode="numeric"></label>
       </div>
-      <div class="row" style="flex-wrap:wrap">
-        <button type="button" class="ghost" id="cropSwap"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="11" height="13" rx="1.5"/><path d="M12 3h4a4 4 0 0 1 4 4v4"/><path d="M17 8l3 3 3-3"/></svg><span data-i18n="crop.swap"></span></button>
+      <div class="row">
+        <button type="button" class="us-btn" id="cropSwap"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="11" height="13" rx="1.5"/><path d="M12 3h4a4 4 0 0 1 4 4v4"/><path d="M17 8l3 3 3-3"/></svg><span data-i18n="crop.swap"></span></button>
       </div>
-      <p class="note" id="cropInfo" style="margin:0"></p>
-      <p class="warnline" id="cropWarn" hidden></p>
-      <p class="note" data-i18n="crop.hint" style="margin:0"></p>
-      <div class="row" style="flex-wrap:wrap">
-        <button type="button" class="ghost" id="cropRemove" data-i18n="crop.remove"></button>
-        <span style="flex:1"></span>
-        <button type="button" class="ghost" id="cropCancel" data-i18n="crop.cancel"></button>
-        <button type="button" class="ghost primary" id="cropApply" data-i18n="crop.apply"></button>
+      <p class="note" id="cropInfo"></p>
+      <p class="us-note us-note--warn" id="cropWarn" hidden></p>
+      <p class="note" data-i18n="crop.hint"></p>
+      <div class="row">
+        <button type="button" class="us-btn" id="cropRemove" data-i18n="crop.remove"></button>
+        <span class="push"></span>
+        <button type="button" class="us-btn" id="cropCancel" data-i18n="crop.cancel"></button>
+        <button type="button" class="us-btn us-btn--primary" id="cropApply" data-i18n="crop.apply"></button>
       </div>
     </section>
-    <div class="row" id="loadRow" style="flex-wrap:wrap" hidden>
-      <button type="button" class="ghost" id="loadBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg><span data-i18n="loadPhoto"></span></button>
+    <div class="row" id="loadRow" hidden>
+      <button type="button" class="us-btn" id="loadBtn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></svg><span data-i18n="loadPhoto"></span></button>
       <span class="note" data-i18n="orDrop"></span>
       <input type="file" id="fileIn" accept="image/*" hidden>
     </div>
 
-    <section style="display:flex;flex-direction:column;gap:10px">
+    <section class="stack">
       <div class="hist-head">
-        <div class="h" data-i18n="histogram"></div>
-        <div class="pills" role="group" data-i18n-aria="channel">
-          <button class="pill" type="button" data-ch="rgb" aria-pressed="true">RGB</button>
-          <button class="pill" type="button" data-ch="r" aria-pressed="false">R</button>
-          <button class="pill" type="button" data-ch="g" aria-pressed="false">G</button>
-          <button class="pill" type="button" data-ch="b" aria-pressed="false">B</button>
-          <button class="pill" type="button" data-ch="l" aria-pressed="false">LUM</button>
+        <div class="us-label" data-i18n="histogram"></div>
+        <div class="chips" role="group" data-i18n-aria="channel">
+          <button class="us-chip" type="button" data-ch="rgb" aria-pressed="true">RGB</button>
+          <button class="us-chip" type="button" data-ch="r" aria-pressed="false">R</button>
+          <button class="us-chip" type="button" data-ch="g" aria-pressed="false">G</button>
+          <button class="us-chip" type="button" data-ch="b" aria-pressed="false">B</button>
+          <button class="us-chip" type="button" data-ch="l" aria-pressed="false">LUM</button>
         </div>
       </div>
       <div class="hist">
@@ -423,17 +208,18 @@ body.web .preview{max-height:46vh}
         </div>
       </div>
       <div class="row">
-        <button type="button" class="ghost" id="autoLv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span data-i18n="autoLevels"></span></button>
-        <button type="button" class="ghost" id="pickBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg><span data-i18n="neutral"></span></button>
-        <button type="button" class="ghost icon" id="resetLv" data-i18n-aria="resetLevels" data-i18n-title="resetLevels"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
+        <button type="button" class="us-btn" id="autoLv"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span data-i18n="autoLevels"></span></button>
+        <button type="button" class="us-btn" id="pickBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M17 7l-9.5 9.5L4 20l3.5-3.5L17 7z"/></svg><span data-i18n="neutral"></span></button>
+        <span class="push"></span>
+        <button type="button" class="us-btn us-btn--icon" id="resetLv" data-i18n-aria="resetLevels" data-i18n-title="resetLevels"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button>
       </div>
-      <div class="hint" id="pickHint" data-i18n="pickHint" hidden></div>
+      <div class="us-note" id="pickHint" data-i18n="pickHint" hidden></div>
     </section>
 
     <!-- Migliora qualità: pulizia automatica in un clic -->
-    <section class="qbox">
-      <button type="button" class="qbtn" id="qBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span data-i18n="quality"></span></button>
-      <p class="note" data-i18n="quality.desc" style="margin:0"></p>
+    <section class="stack">
+      <button type="button" class="us-btn us-btn--block" id="qBtn" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2 2.2.8-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg><span data-i18n="quality"></span></button>
+      <p class="note" data-i18n="quality.desc"></p>
       <div class="srow" id="qRow" hidden>
         <label for="qAmt" data-i18n="quality.amount"></label>
         <input id="qAmt" class="sl" type="range" min="1" max="100" step="1" value="60">
@@ -441,29 +227,34 @@ body.web .preview{max-height:46vh}
       </div>
     </section>
 
-    <section style="display:flex;flex-direction:column;gap:8px">
-      <div class="h" data-i18n="quick"></div>
+    <section class="stack">
+      <div class="us-label" data-i18n="quick"></div>
       <div class="chips" id="presets"></div>
     </section>
 
     <div class="sep"></div>
     <section id="sliders"></section>
     <p class="note" id="note"></p>
-    <p class="note links"><a href="support.html" target="_blank" rel="noopener" data-i18n="support"></a> · <a href="privacy.html" target="_blank" rel="noopener" data-i18n="privacy"></a> · <a href="terms.html" target="_blank" rel="noopener" data-i18n="terms"></a></p>
   </main>
 
-  <footer class="foot" id="foot" hidden>
-    <button type="button" class="fb sec" id="resetAll" data-i18n="reset"></button>
-    <button type="button" class="fb sec" id="beforeBtn" aria-pressed="false" data-i18n="beforeAfter"></button>
-    <button type="button" class="fb sec" id="restoreBtn" hidden></button>
-    <button type="button" class="fb pri" id="applyBtn"></button>
+  <!-- Chiusura comune ai Lab: su telefono resta sopra la barra fissa delle azioni -->
+  <footer class="us-footer">
+    <a class="us-cta" id="usCta" href="mailto:info@theultraspeaker.com"><img src="assets/arena-white.svg?v=20261112" alt=""><span data-i18n="us.cta"></span></a>
+    <p class="us-links"><a href="support.html" target="_blank" rel="noopener" data-i18n="us.support"></a><a href="privacy.html" target="_blank" rel="noopener" data-i18n="us.privacy"></a><a href="terms.html" target="_blank" rel="noopener" data-i18n="us.terms"></a><a href="GUIDA-INSTALLAZIONE.html" target="_blank" rel="noopener" data-i18n="us.install"></a></p>
   </footer>
+
+  <div class="foot" id="foot" hidden>
+    <button type="button" class="us-btn" id="resetAll" data-i18n="reset"></button>
+    <button type="button" class="us-btn" id="beforeBtn" aria-pressed="false" data-i18n="beforeAfter"></button>
+    <button type="button" class="us-btn" id="restoreBtn" hidden></button>
+    <button type="button" class="us-btn us-btn--primary" id="applyBtn"></button>
+  </div>
 </div>
 <div class="drop" id="drop" hidden><img src="assets/image-lab-logetto.svg" alt=""><span data-i18n="dropHere"></span></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="i18n.js"></script>
-<script src="imaging.js"></script>
-<script src="app.js"></script>
+<script src="i18n.js?v=20261112"></script>
+<script src="imaging.js?v=20261112"></script>
+<script src="app.js?v=20261112"></script>
 </body>
 </html>

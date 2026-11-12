@@ -4,9 +4,9 @@ Testi pronti da incollare in Partner Center, nella sezione *Offer listing* di og
 Gli screenshot (1366×768 PNG) sono in `screenshots/` con il prefisso della lingua (`it-1.png`, `en-1.png`…).
 
 Link da inserire in tutte le lingue:
-- Privacy policy: `https://niki977.github.io/image-lab/privacy.html`
-- Support: `https://niki977.github.io/image-lab/support.html`
-- Terms of use / EULA: `https://niki977.github.io/image-lab/terms.html`
+- Privacy policy: `https://niki977.github.io/ultraspeaker-image-lab/privacy.html`
+- Support: `https://niki977.github.io/ultraspeaker-image-lab/support.html`
+- Terms of use / EULA: `https://niki977.github.io/ultraspeaker-image-lab/terms.html`
 - Icona 300×300: `assets/image-lab-icon-300.png`
 
 Categorie suggerite: Productivity, Design (o le più vicine proposte da Partner Center).
