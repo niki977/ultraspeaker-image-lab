@@ -5,11 +5,11 @@ esposizione, contrasto, saturazione, luci, ombre, nitidezza, riduzione rumore, t
 punto neutro, «Migliora qualità», ritaglio a proporzioni (social, slide, stampa) o a misura, rotazione
 (90°, 180° e raddrizzamento fino a ±45°), DuoTone/TriTone, zoom, annulla/ripeti.
 Interfaccia in italiano, inglese, spagnolo, francese e tedesco. Fa parte dei Lab The Ultraspeaker
-e segue la linea guida comune 1.3.
+e segue la linea guida comune con il kit 1.5.
 
 - **Versione web:** <https://niki977.github.io/ultraspeaker-image-lab/>
 - **Pannello di PowerPoint:** manifest `image-lab-manifest.xml` (in prova, fase 2)
-- **Versione:** 1.4.0 (novembre 2026)
+- **Versione:** 1.4.1 (novembre 2026)
 
 ## Come funziona
 
@@ -40,13 +40,18 @@ Mac 16.105 o successivo, oppure PowerPoint per il web. iPad non è supportato.
 | `i18n.js` | Testi nelle cinque lingue |
 | `support.html`, `privacy.html`, `terms.html`, `GUIDA-INSTALLAZIONE.html`, `legal.js` | Pagine di servizio in cinque lingue |
 | `image-lab-manifest.xml`, `site.webmanifest` | Manifest dell'add-in e della versione web |
-| `shared/`, `fonts/` | Kit comune 1.3 dei Lab (non si modifica qui) |
+| `shared/`, `fonts/` | Kit comune 1.5 dei Lab (non si modifica qui) |
 | `assets/` | Loghi, Arena, favicon e icone (16–512 px) |
 | `guide/` | Guida d'utilizzo PDF in cinque lingue, sorgenti, screenshot e `capture.mjs` |
 | `store/` | Testi e screenshot per AppSource, presentazione di prova |
 
-Memoria del browser: solo la lingua, in `ultraspeaker.lang` (comune ai Lab). La vecchia chiave `imagelab.lang`
+Memoria del browser: la lingua, in `ultraspeaker.lang` (comune ai Lab). La vecchia chiave `imagelab.lang`
 viene copiata al primo avvio e poi cancellata.
+
+Statistiche d'uso anonime (kit 1.5, `shared/ultraspeaker-stats.js`): `image:open` all'apertura, `upload` (foto propria caricata),
+`export:start` / `export:done` (Scarica la foto / Salva o condividi, `done` solo a file salvato o condiviso), `insert`
+(«Applica alla slide» riuscito) e, a ogni risultato, gli strumenti presenti una volta per sessione: `crop`, `rotate`,
+`duotone`, `quality`. Mai foto, nomi di file o regolazioni. `?nostats=1` esclude il proprio browser; su localhost non parte nulla.
 
 ## Guida d'utilizzo
 
@@ -70,6 +75,7 @@ Il capitolo 08 (PowerPoint) ha il riquadro «In arrivo»: quando il pannello esc
 
 ## Versioni
 
+- **1.4.1** (novembre 2026): kit comune 1.5 con statistiche d'uso anonime; privacy aggiornata. Manifest invariato (1.4.0.0).
 - **1.4.0** (novembre 2026): uniformazione alla linea guida 1.3 (kit comune, aspetto, lingua comune, pagine di servizio
   scure in cinque lingue, guida d'utilizzo PDF, nuovo indirizzo `ultraspeaker-image-lab`); ritaglio a proporzioni.
 - **1.3.0** (ottobre 2026): DuoTone/TriTone, ritaglio, rotazione, «Migliora qualità», semplificazione del codice.

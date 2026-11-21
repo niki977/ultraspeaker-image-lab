@@ -19,6 +19,15 @@
   const touchOnly = () => mq("(hover: none) and (pointer: coarse)");
   // i pannelli stanno subito sotto l'anteprima fissa: aprendoli si torna in cima per vederli
   const toTop = () => { try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); } };
+  // statistiche d'uso anonime (kit 1.5): solo il nome dell'azione, mai foto, nomi di file o regolazioni
+  const stat = (a, once) => { try { window.UltraspeakerStats.track(a, once); } catch (e) { /* statistiche non disponibili */ } };
+  // strumenti presenti nel risultato, contati una volta per sessione
+  function statTools() {
+    if (P.crop) stat("crop", true);
+    if (P.rq || P.rot) stat("rotate", true);
+    if (P.dt) stat("duotone", true);
+    if (P.q > 0) stat("quality", true);
+  }
   function canvas(w, h) { const c = document.createElement("canvas"); c.width = Math.max(1, w); c.height = Math.max(1, h); return c; }
 
   /* ---------- Lingua ---------- */
@@ -1030,6 +1039,7 @@
       const img = await loadImg(url);
       useImage(img);
       freshStart(null, false);
+      stat("upload");
     } catch (e) { toast(t("toast.loadError")); }
     finally { URL.revokeObjectURL(url); }
   }
@@ -1180,6 +1190,7 @@
       try {
         await navigator.share({ files: [file], title: "Image Lab" });
         shareFile = null; toast(t("toast.shared"));
+        stat("export:done"); statTools();
       } catch (e) {
         if (e && e.name === "AbortError") { shareFile = null; }            // chiuso dall'utente
         else { shareFile = file; toast(t("shareReady")); }                 // il browser chiede un nuovo tocco
@@ -1193,6 +1204,7 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 4000);
     toast(t("toast.downloaded"));
+    stat("export:done"); statTools();
   }
 
   function insertImage(b64, box) {
@@ -1207,6 +1219,7 @@
     if (busy || !orig || cropMode) return;
     if (mode === "demo") {
       if (shareFile) { const f = shareFile; shareFile = null; await shareOrSave(f); return; }
+      stat("export:start");
       busy = true; updateTexts();
       await wait(30);
       try {
@@ -1309,6 +1322,7 @@
       lastKey = cur.slideId + "/" + newId;
       baseline = Object.assign(D(), JSON.parse(snap(P)));
       toast(t("toast.applied"));
+      stat("insert"); statTools();
     } catch (e) {
       console.error(e);
       toast(t("toast.error"));
@@ -1441,6 +1455,7 @@
     LANG = detectLang();
     bindUI();
     applyStatic();
+    try { window.UltraspeakerStats.init("image"); } catch (e) { /* statistiche non disponibili */ }
     if (!inOffice) { startDemo(); return; }
     let ok = false;
     try { ok = Office.context.requirements.isSetSupported("PowerPointApi", "1.10"); } catch (e) { ok = false; }
